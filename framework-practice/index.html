@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Framework Practice</title>
+  <script src="cases.js"></script>
+  <style>
+    :root {
+      --smu-blue: #354CA1;
+      --smu-red: #CC0035;
+      --gold: #F9C80E;
+      --blue-ink: #202F68;
+      --wash: #EEF1FA;
+      --beginner: #B7C1E7;
+      --surface: #FFFFFF;
+      --canvas: #F6F7FB;
+      --line: #E2E5EF;
+      --ink: #202432;
+      --muted: #687083;
+      --white: #ffffff;
+      --shadow: 0 18px 50px rgba(32, 47, 104, .09);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { min-height: 100%; background: var(--canvas); }
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--ink);
+      font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: radial-gradient(ellipse at 50% -18%, #E7EBFA 0, transparent 50%), var(--canvas);
+    }
+
+    .triangle {
+      position: fixed; top: 0; right: 0; width: 0; height: 0;
+      border-top: 74px solid var(--smu-red); border-left: 74px solid transparent;
+      z-index: 5; pointer-events: none;
+    }
+    header {
+      min-height: 76px; display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 14px max(28px, calc((100vw - 1120px) / 2));
+      border-bottom: 1px solid rgba(53, 76, 161, .1); background: rgba(255,255,255,.82);
+      backdrop-filter: blur(12px);
+    }
+    .header-brand { display: flex; align-items: center; gap: 13px; flex-wrap: wrap; }
+    .wordmark-smu {
+      font-weight: 900; letter-spacing: .07em; font-size: 23px; color: var(--smu-blue);
+      line-height: 1; padding-right: 13px; border-right: 1px solid var(--line);
+    }
+    .wordmark-club { font-weight: 700; font-size: 12px; color: var(--blue-ink); letter-spacing: .035em; }
+    main { width: min(100% - 40px, 900px); margin: 0 auto; padding: 48px 0 76px; }
+
+    h1 { font-size: clamp(32px, 5vw, 46px); line-height: 1.08; letter-spacing: -.04em; color: var(--blue-ink); margin-bottom: 14px; }
+    h2 { font-size: 22px; color: var(--blue-ink); margin-bottom: 10px; }
+    p, li { font-size: 16px; line-height: 1.7; color: var(--ink); }
+    .lede { color: var(--muted); max-width: 660px; margin-bottom: 26px; font-size: 17px; }
+
+    #app > h1, #app > .lede, #app > .steps, #app > .actions, #app > .note { position: relative; }
+    #app > h1::before {
+      content: "SMU CONSULTING CLUB  /  CASE INTERVIEW PRACTICE"; display: block;
+      color: var(--smu-red); font-size: 11px; font-weight: 800; letter-spacing: .13em;
+      margin-bottom: 15px;
+    }
+    #app > h1 { margin-top: 14px; }
+    .steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 32px 0 28px; }
+    .step {
+      min-height: 116px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+      padding: 19px; display: grid; grid-template-columns: 42px 1fr; gap: 14px; align-items: start;
+      box-shadow: 0 5px 18px rgba(32,47,104,.035); color: var(--muted); font-size: 14px; line-height: 1.55;
+    }
+    .step b { display: block; color: var(--blue-ink); font-size: 13px; letter-spacing: .04em; margin: 1px 0 5px; }
+    .num {
+      background: var(--wash); color: var(--smu-blue); border-radius: 12px; font-weight: 800;
+      width: 40px; height: 40px; display: grid; place-items: center;
+    }
+    .step:nth-child(1) .num, .step:nth-child(4) .num { background: #FCE8EE; color: var(--smu-red); }
+
+    .stage-bar {
+      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 24px;
+      margin: 0 auto 26px; padding: 22px 26px; background: var(--surface); border: 1px solid var(--line);
+      border-radius: 18px; box-shadow: var(--shadow); text-align: left;
+    }
+    .stage-left { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
+    .phase-label {
+      display: inline-block; color: var(--blue-ink); font-size: clamp(21px, 4vw, 27px); font-weight: 800;
+      letter-spacing: -.025em; line-height: 1.15;
+    }
+    .phase-label::before { content: "YOUR NEXT STEP"; display: block; color: var(--smu-red); font-size: 10px; letter-spacing: .14em; margin-bottom: 8px; }
+    .dots { display: flex; gap: 7px; align-items: center; }
+    .dot { width: 25px; height: 5px; border-radius: 10px; background: #E1E5F0; }
+    .dot.on { background: var(--smu-red); width: 34px; }
+    .dot.done { background: var(--smu-blue); }
+    .timer {
+      font-variant-numeric: tabular-nums; font-weight: 800; font-size: clamp(42px, 7vw, 58px);
+      letter-spacing: -.055em; color: var(--smu-blue); line-height: 1; margin: 0; padding: 15px 18px;
+      background: var(--wash); border-radius: 14px; min-width: 148px; text-align: center;
+    }
+    .timer::after { content: "REMAINING"; display: block; font-size: 9px; letter-spacing: .16em; margin-top: 7px; color: var(--muted); }
+    .timer.warn { color: var(--smu-red); background: #FFF0F3; }
+    .stage-bar .actions { grid-column: 1 / -1; justify-content: flex-start; margin: 0; padding-top: 17px; border-top: 1px solid var(--line); }
+
+    .prompt-card {
+      background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--gold);
+      border-radius: 14px; padding: clamp(22px, 4vw, 34px); font-size: 18px; line-height: 1.75;
+      box-shadow: 0 8px 30px rgba(32,47,104,.05);
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; justify-content: center; }
+    button { font-family: inherit; cursor: pointer; border: 0; transition: transform .16s ease, box-shadow .16s ease, background .16s ease; }
+    button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+    .btn-home { background: transparent; color: var(--smu-blue); font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; padding: 10px 14px; border-radius: 9px; }
+    .btn-home:hover { background: var(--wash); color: var(--smu-red); }
+    .btn-primary {
+      background: var(--smu-red); color: var(--white); font-weight: 800; font-size: 14px;
+      letter-spacing: .055em; text-transform: uppercase; padding: 15px 23px; border-radius: 10px;
+      box-shadow: 0 7px 16px rgba(204,0,53,.19);
+    }
+    .btn-primary:hover { background: #B90030; transform: translateY(-1px); box-shadow: 0 10px 20px rgba(204,0,53,.24); }
+    .debrief { display: grid; gap: 13px; margin: 0 0 28px; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 13px; padding: 22px 24px; box-shadow: 0 5px 20px rgba(32,47,104,.035); }
+    .card h3 { color: var(--smu-red); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 9px; }
+    .card ul { padding-left: 20px; }
+    .card li { margin: 6px 0; }
+    .card p + p { margin-top: 10px; }
+    .bucket { margin: 17px 0 0; padding: 16px 18px; background: var(--canvas); border-radius: 10px; }
+    .bucket-name { font-weight: 800; color: var(--blue-ink); margin-bottom: 5px; }
+    .note { font-size: 13px; color: var(--muted); margin-top: 16px; text-align: center; }
+
+    @media (max-width: 640px) {
+      header { min-height: 66px; padding: 12px 20px; }
+      .wordmark-smu { font-size: 20px; }
+      .wordmark-club { max-width: 190px; font-size: 10px; }
+      .triangle { border-top-width: 54px; border-left-width: 54px; }
+      main { width: min(100% - 32px, 900px); padding: 34px 0 52px; }
+      .steps { grid-template-columns: 1fr; margin-top: 24px; gap: 9px; }
+      .step { min-height: 0; padding: 15px; }
+      .stage-bar { grid-template-columns: 1fr auto; gap: 12px; padding: 18px; margin-bottom: 18px; }
+      .timer { min-width: 100px; padding: 13px 11px; font-size: 39px; }
+      .phase-label { font-size: 21px; }
+      .dot { width: 19px; }
+      .dot.on { width: 27px; }
+      .prompt-card { font-size: 16px; padding: 21px; }
+      .card { padding: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+
+    /* Editorial SMU direction: confident navy, warm paper, and a restrained red accent. */
+    :root { --canvas: #F3F2EF; --surface: #fff; --line: #E4E1DC; --blue-ink: #17285D; --smu-blue: #354CA1; --smu-red: #C8102E; --wash: #EEF0F7; --shadow: 0 14px 38px rgba(23,40,93,.08); }
+    body { background: var(--canvas); }
+    header { background: var(--blue-ink); border: 0; color: white; }
+    .wordmark-smu { color: white; border-color: rgba(255,255,255,.28); }
+    .wordmark-club { color: #E8EAF3; }
+    .btn-home { color: white; }
+    .btn-home:hover { color: white; background: rgba(255,255,255,.12); }
+    .triangle { display: none; }
+    main { width: min(100% - 48px, 1040px); padding-top: 54px; }
+    #app > .home-hero {
+      position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr 260px; align-items: center; gap: 36px;
+      padding: 46px 48px; color: white; background: var(--blue-ink); border-radius: 22px;
+      box-shadow: 0 22px 55px rgba(23,40,93,.17); margin-bottom: 36px;
+    }
+    .home-hero::before { content: ""; position: absolute; width: 300px; height: 300px; border: 1px solid rgba(255,255,255,.13); border-radius: 50%; right: 110px; top: -170px; }
+    .home-hero::after { content: ""; position: absolute; width: 190px; height: 190px; border: 1px solid rgba(255,255,255,.13); border-radius: 50%; right: -65px; bottom: -115px; }
+    .hero-copy, .hero-side { position: relative; z-index: 1; }
+    .hero-kicker { display: block; color: #F5CF48; font-size: 10px; font-weight: 800; letter-spacing: .16em; margin-bottom: 15px; }
+    #app .home-hero h1 { color: white; font-family: Georgia, "Times New Roman", serif; font-size: clamp(38px, 5.3vw, 56px); letter-spacing: -.04em; margin: 0 0 14px; }
+    #app .home-hero h1::before { display: none; }
+    #app .home-hero .lede { color: #D9DEED; font-size: 16px; max-width: 530px; margin: 0; }
+    .hero-side { border-left: 1px solid rgba(255,255,255,.23); padding-left: 30px; }
+    .hero-stat { color: #F5CF48; font-family: Georgia, serif; font-size: 42px; line-height: 1; }
+    .hero-stat-label { color: #D9DEED; font-size: 12px; line-height: 1.5; margin-top: 9px; }
+    .flow-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 0 2px 15px; }
+    .flow-heading h2 { font-size: 19px; margin: 0; letter-spacing: -.02em; }
+    .flow-heading span { color: var(--muted); font-size: 12px; }
+    .steps { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0; margin: 0 0 24px; background: white; border: 1px solid var(--line); border-radius: 15px; overflow: hidden; }
+    .step { min-height: 158px; display: block; position: relative; border: 0; border-right: 1px solid var(--line); border-radius: 0; padding: 18px; box-shadow: none; background: white; }
+    .step:last-child { border-right: 0; }
+    .step .num { width: 29px; height: 29px; border-radius: 50%; font-size: 12px; margin-bottom: 14px; background: var(--blue-ink); color: white; }
+    .step:nth-child(1) .num, .step:nth-child(4) .num { background: var(--blue-ink); color: white; }
+    .step b { font-size: 12px; line-height: 1.4; min-height: 34px; }
+    .step { font-size: 12px; line-height: 1.55; }
+    #app > .actions { justify-content: flex-start; margin-top: 0; }
+    #app > .actions .btn-primary { min-width: 190px; }
+    #app > .note { text-align: left; margin-top: 12px; }
+    .steps { display: flex; flex-direction: column; gap: 0; border: 0; border-radius: 0; background: transparent; overflow: visible; margin-bottom: 24px; }
+    .step {
+      min-height: 0; display: grid; grid-template-columns: 42px minmax(185px, .75fr) 1.25fr; align-items: center;
+      gap: 18px; padding: 17px 8px; border: 0; border-bottom: 1px solid #D9D6D0; border-radius: 0;
+      background: transparent; box-shadow: none; font-size: 13px; color: var(--muted);
+    }
+    .step:first-child { border-top: 1px solid #D9D6D0; }
+    .step .num, .step:nth-child(1) .num, .step:nth-child(4) .num {
+      width: 32px; height: 32px; margin: 0; border-radius: 50%; background: white;
+      border: 1px solid #C8C5BE; color: var(--blue-ink); font-size: 12px;
+    }
+    .step b { min-height: 0; margin: 0; font-size: 13px; color: var(--blue-ink); }
+    .steps .step:last-child { margin-top: 0; padding: 17px 8px; background: transparent; border: 0; border-bottom: 1px solid #e8e8ed; border-radius: 0; font-style: italic; }
+    .steps .step:last-child .num { font-style: normal; }
+    .stage-bar { border-radius: 15px; padding: 20px 24px; box-shadow: 0 5px 20px rgba(23,40,93,.05); }
+    .phase-label::before { letter-spacing: .12em; }
+    .prompt-card { border-top: 0; border-left: 4px solid var(--smu-red); border-radius: 12px; font-size: 17px; }
+    .card { box-shadow: 0 3px 14px rgba(23,40,93,.025); }
+    @media (max-width: 700px) {
+      main { width: min(100% - 32px, 1040px); padding-top: 30px; }
+      #app > .home-hero { grid-template-columns: 1fr; gap: 24px; padding: 30px 26px; border-radius: 17px; }
+      .hero-side { border-left: 0; border-top: 1px solid rgba(255,255,255,.23); padding: 17px 0 0; display: flex; align-items: center; gap: 13px; }
+      .hero-stat { font-size: 32px; }
+      .hero-stat-label { margin: 0; max-width: 185px; }
+      .step { grid-template-columns: 34px 1fr; gap: 8px 13px; padding: 15px 4px; }
+      .step > span { grid-column: 2; }
+    }
+    @media (max-width: 420px) { .flow-heading { display: block; } .flow-heading span { display: block; margin-top: 5px; } }
+
+    /* Minimal, product-page inspired presentation while retaining SMU identity. */
+    :root { --canvas: #fff; --surface: #fff; --line: #e8e8ed; --blue-ink: #1d1d1f; --ink: #1d1d1f; --muted: #6e6e73; --smu-blue: #354CA1; --smu-red: #C8102E; --wash: #f5f5f7; --shadow: 0 12px 35px rgba(0,0,0,.06); }
+    body { background: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+    header { min-height: 52px; padding: 0 max(24px, calc((100vw - 1000px) / 2)); background: rgba(255,255,255,.88); border-bottom: 1px solid #e8e8ed; backdrop-filter: saturate(180%) blur(18px); }
+    header { position: relative; }
+    .mustang-mark { position: absolute; width: 36px; height: 36px; object-fit: contain; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+    .wordmark-smu { color: var(--smu-blue); border-color: #d2d2d7; font-size: 19px; }
+    .smu-wordmark { display: block; width: 46px !important; height: 21px !important; object-fit: contain; padding: 0; border: 0; background: transparent; }
+    .wordmark-club { color: #424245; font-weight: 500; }
+    .btn-home { color: #424245; font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+    .btn-home:hover { color: var(--smu-blue); background: #f5f5f7; }
+    main { width: min(100% - 48px, 980px); padding: 76px 0 90px; }
+    #app > .home-hero { display: flex; flex-direction: column; align-items: center; gap: 0; text-align: center; color: var(--ink); background: white; box-shadow: none; border-radius: 0; margin: 0 auto 54px; padding: 4px 12px 0; }
+    .home-hero::before, .home-hero::after { display: none; }
+    .hero-copy, .hero-side { position: static; }
+    .hero-kicker { color: var(--smu-red); font-size: 11px; letter-spacing: .12em; margin-bottom: 22px; }
+    #app .home-hero h1 { color: #1d1d1f; font: 700 clamp(48px, 8vw, 82px)/.99 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; letter-spacing: -.065em; margin: 0 auto 20px; max-width: 760px; }
+    #app .home-hero h1 br { display: none; }
+    #app .home-hero .lede { color: #6e6e73; font-size: clamp(18px, 2.3vw, 22px); line-height: 1.45; max-width: 620px; margin: 0 auto; }
+    .hero-side { display: flex; align-items: baseline; gap: 8px; border: 0; padding: 18px 0 0; }
+    .hero-stat { color: #424245; font: 600 14px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+    .hero-stat-label { color: #6e6e73; font-size: 13px; margin: 0; }
+    .flow-heading { display: flex; flex-direction: column; align-items: center; margin: 0 0 15px; gap: 2px; text-align: center; }
+    .flow-heading h2 { color: #1d1d1f; font-size: 23px; font-weight: 600; letter-spacing: -.025em; }
+    .flow-heading span { color: #6e6e73; font-size: 14px; }
+    .flow-heading p { color: #6e6e73; font-size: 12px; line-height: 1.4; margin: 0; }
+    .flow-heading span { color: #6e6e73; font-size: 12px; }
+    .flow-heading .flash-disclaimer { margin-top: 0; }
+    .inline-link { display: inline; padding: 0; color: #06c; background: transparent; font: inherit !important; font-size: 12px !important; line-height: 1.4 !important; font-weight: inherit; text-decoration: underline; text-underline-offset: 2px; }
+    .inline-link:hover { color: #004fbd; }
+    .inline-link:focus-visible { outline: 2px solid var(--smu-blue); outline-offset: 3px; border-radius: 2px; }
+    .steps { max-width: 760px; margin: 0 auto 30px; }
+    .step { grid-template-columns: 40px minmax(190px, .7fr) 1.3fr; gap: 20px; padding: 20px 4px; border-color: #e8e8ed; color: #6e6e73; font-size: 14px; }
+    .step:first-child { border-color: #e8e8ed; }
+    .step .num, .step:nth-child(1) .num, .step:nth-child(4) .num { width: 30px; height: 30px; border: 0; background: #f5f5f7; color: #424245; font-size: 12px; font-weight: 600; }
+    .step b { color: #1d1d1f; font-size: 14px; font-weight: 600; }
+    #app > .actions { justify-content: center; }
+    .btn-primary { background: #0071e3; box-shadow: none; border-radius: 999px; padding: 12px 22px; font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+    .btn-primary:hover { background: #0077ed; box-shadow: none; transform: none; }
+    .btn-secondary { background: #f5f5f7; color: #06c; box-shadow: none; border-radius: 999px; padding: 12px 22px; font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+    .btn-secondary:hover { background: #e9e9ed; }
+    #app > .note { text-align: center; color: #86868b; font-size: 12px; }
+    .stage-bar { border: 0; border-bottom: 1px solid #e8e8ed; border-radius: 0; box-shadow: none; padding: 22px 0; }
+    .practice-stage {
+      min-height: min(44vh, 360px); grid-template-rows: 1fr auto; align-content: center; align-items: center;
+      background: #f5f5f7; border: 1px solid #e8e8ed; border-radius: 20px; box-shadow: none;
+      padding: clamp(28px, 5vw, 54px); margin: 16px 0 24px;
+    }
+    .practice-stage .stage-left { gap: 22px; }
+    .practice-stage .phase-label { font-size: clamp(30px, 4.4vw, 42px); }
+    .practice-stage .dot { width: 31px; height: 6px; }
+    .practice-stage .dot.on { width: 45px; }
+    .practice-stage .timer { min-width: 195px; padding: 20px 22px; font-size: 64px; }
+    .practice-stage .actions { justify-content: center; padding-top: 24px; }
+    .practice-stage .btn-primary { width: 150px; padding: 16px 24px; font-size: 16px; }
+    #advance-btn { width: 150px; }
+    .phase-label { color: #1d1d1f; font-size: clamp(22px, 4vw, 28px); font-weight: 600; letter-spacing: -.035em; }
+    .phase-label::before { font-size: 10px; color: var(--smu-red); }
+    .timer { border-radius: 14px; background: #f5f5f7; color: var(--smu-blue); font-size: 46px; font-weight: 600; letter-spacing: -.05em; }
+    .timer::after { font-weight: 600; }
+    .timer.warn { background: #fff1f2; color: var(--smu-red); }
+    .timer.caution { color: #8A6500; background: #FFF7DB; }
+    .timer.urgent { color: var(--smu-red); background: #FFF0F3; animation: timer-pulse .85s ease-in-out infinite; }
+    @keyframes timer-pulse { 50% { transform: scale(1.035); box-shadow: 0 0 0 7px rgba(200,16,46,.09); } }
+    .time-up-notice {
+      display: flex; align-items: center; gap: 12px; margin: 0 0 18px; padding: 15px 19px;
+      color: #8F1028; background: #FFF0F3; border: 1px solid #F2C3CD; border-left: 5px solid var(--smu-red);
+      border-radius: 12px; font-size: 15px; font-weight: 650; line-height: 1.45;
+      animation: notice-in .2s ease-out both;
+    }
+    .time-up-notice::before { content: "!"; display: grid; place-items: center; flex: 0 0 24px; height: 24px; border-radius: 50%; color: white; background: var(--smu-red); font-weight: 800; }
+    .time-up-notice.is-hidden { opacity: 0; transform: translateY(-5px); transition: opacity .25s ease, transform .25s ease; }
+    @keyframes notice-in { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    .screen-flash {
+      position: fixed; inset: 0; z-index: 20; pointer-events: none;
+      background: rgba(200, 16, 46, .22); animation: screen-flash-once 650ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+    @keyframes screen-flash-once { from { opacity: 1; } to { opacity: 0; } }
+    .completion-overlay {
+      position: fixed; inset: 0; z-index: 30; display: grid; place-items: center;
+      color: white; background: #27834F; animation: completion-overlay 3s ease-in-out both;
+    }
+    .completion-overlay span { font-size: clamp(38px, 7vw, 68px); font-weight: 700; letter-spacing: -.045em; }
+    @keyframes completion-overlay {
+      0% { opacity: 0; }
+      16% { opacity: 1; }
+      66% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .prompt-card { border: 0; background: #f5f5f7; border-radius: 18px; padding: clamp(24px, 5vw, 42px); font-size: 19px; line-height: 1.65; box-shadow: none; }
+    .debrief { gap: 10px; }
+    .card { border: 1px solid #e8e8ed; border-radius: 16px; box-shadow: none; }
+    .card h3 { color: var(--smu-blue); letter-spacing: .08em; }
+    .bucket { background: #f5f5f7; }
+    @media (max-width: 700px) {
+      main { width: min(100% - 36px, 980px); padding: 50px 0 64px; }
+      header { gap: 8px; padding: 0 15px; }
+      .mustang-mark { position: static; width: 30px; height: 30px; transform: none; margin-left: auto; flex: 0 0 auto; }
+      .smu-wordmark { width: 42px !important; height: 20px !important; padding: 0; }
+      .header-brand { gap: 8px; }
+      .wordmark-smu { padding-right: 8px; }
+      .wordmark-club { max-width: 160px; font-size: 10px; }
+      .btn-home { flex: 0 0 auto; padding: 8px; }
+      #app > .home-hero { padding: 0 0 4px; margin-bottom: 40px; }
+      #app .home-hero h1 { font-size: clamp(46px, 13vw, 68px); }
+      .step { grid-template-columns: 34px 1fr; gap: 7px 13px; padding: 16px 2px; }
+      .step > span { grid-column: 2; }
+      .stage-bar { grid-template-columns: 1fr auto; }
+      .practice-stage { min-height: 300px; padding: 24px 20px; gap: 18px; }
+      .practice-stage .phase-label { font-size: 28px; }
+      .practice-stage .timer { min-width: 112px; padding: 16px 12px; font-size: 44px; }
+      .time-up-notice { font-size: 14px; padding: 13px 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .timer.urgent { animation: none; }
+      .time-up-notice { animation: none; }
+      .time-up-notice.is-hidden { transition: none; }
+      .screen-flash { display: none; }
+      .completion-overlay { animation: none; }
+    }
+
+    /* Members-only gate (session unlock) */
+    #gate {
+      position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+      padding: 28px 20px; background: #fff;
+    }
+    #gate[hidden] { display: none; }
+    .gate-panel {
+      width: min(100%, 420px); text-align: center;
+    }
+    .gate-kicker {
+      display: block; color: var(--smu-red); font-size: 11px; font-weight: 800;
+      letter-spacing: .12em; margin-bottom: 18px;
+    }
+    .gate-panel h1 {
+      color: #1d1d1f; font-size: clamp(28px, 6vw, 36px); font-weight: 700;
+      letter-spacing: -.045em; line-height: 1.1; margin: 0 0 12px;
+    }
+    .gate-panel .lede {
+      color: #6e6e73; font-size: 15px; line-height: 1.5; max-width: none; margin: 0 0 28px;
+    }
+    .gate-form { display: grid; gap: 12px; text-align: left; }
+    .gate-form label {
+      display: block; color: #424245; font-size: 13px; font-weight: 600; margin-bottom: 6px;
+    }
+    .gate-form input[type="password"] {
+      width: 100%; font: inherit; font-size: 16px; color: #1d1d1f;
+      padding: 13px 14px; border: 1px solid #d2d2d7; border-radius: 12px; background: #fff;
+    }
+    .gate-form input[type="password"]:focus {
+      outline: none; border-color: #0071e3; box-shadow: 0 0 0 3px rgba(0, 113, 227, .18);
+    }
+    .gate-form .btn-primary { width: 100%; margin-top: 4px; }
+    .gate-error {
+      color: var(--smu-red); font-size: 13px; font-weight: 600; min-height: 1.2em; margin: 0;
+    }
+    .gate-error[hidden] { display: none; }
+    .gate-note { color: #86868b; font-size: 12px; margin-top: 18px; text-align: center; }
+    body.is-gated header,
+    body.is-gated main { visibility: hidden; }
+  </style>
+</head>
+<body class="is-gated">
+  <div id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+    <div class="gate-panel">
+      <span class="gate-kicker">SMU CONSULTING CLUB</span>
+      <h1 id="gate-title">Members only</h1>
+      <p class="lede">Enter the club password to open Framework Practice.</p>
+      <form class="gate-form" id="gate-form" autocomplete="off">
+        <div>
+          <label for="gate-password">Password</label>
+          <input id="gate-password" name="password" type="password" autocomplete="current-password" required autofocus />
+        </div>
+        <p class="gate-error" id="gate-error" hidden>Incorrect password. Try again.</p>
+        <button class="btn-primary" type="submit">Enter</button>
+      </form>
+      <p class="gate-note">Shared with Consulting &amp; Corporate Strategy Club members.</p>
+    </div>
+  </div>
+  <div class="triangle" aria-hidden="true"></div>
+  <header>
+    <div class="header-brand">
+      <img class="smu-wordmark" src="https://www.smu.edu/-/media/site/brand/2022/logo-guidelines/general/smu-logo_formal_digitalonly_r.png?h=90&amp;hash=8E328458DB88522ED0F776C15F974712&amp;w=200" alt="SMU" />
+      <span class="wordmark-club">Consulting &amp; Corporate Strategy Club</span>
+    </div>
+    <img class="mustang-mark" src="https://www.smu.edu/-/media/site/brand/2022/logo-guidelines/peruna/perunar.png?h=402&amp;hash=D34CA424D04C4D9B074AC7E1646133C3&amp;w=400" alt="SMU Mustang" />
+    <button class="btn-home" id="home-btn" type="button">Home</button>
+  </header>
+  <main id="app"></main>
+  <script>
+    const USED_KEY = "frameworkPracticeUsedIds";
+    const FLASH_KEY = "frameworkPracticeFlashEnabled";
+    const AUTH_KEY = "frameworkPracticeUnlocked";
+    // SHA-256 of the club password (plain text is not stored in this file)
+    const AUTH_HASH = "6334aee1bf3396e07683a3e0dbcfc68c368cd85960977504ea0539f3578524c1";
+    const PHASES = ["prompt", "recap", "framework", "explain", "debrief"];
+    const DURATIONS = {
+      recap: 90,
+      framework: 135,
+      explain: 120
+    };
+
+    const COPY = {
+      recap: { label: "Recap & questions" },
+      framework: { label: "Build your framework" },
+      explain: { label: "Explain your framework" }
+    };
+
+    let currentCase = null;
+    let phase = "home";
+    let remaining = 0;
+    let timerId = null;
+    let pendingTimeUpNotice = "";
+    let flashEnabled = true;
+    try { flashEnabled = localStorage.getItem(FLASH_KEY) !== "false"; } catch (e) {}
+    const app = document.getElementById("app");
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return m + ":" + String(s).padStart(2, "0");
+    }
+
+    function promptDuration(prompt) {
+      const wordCount = String(prompt || "").trim().split(/\s+/).filter(Boolean).length;
+      const estimatedSeconds = 12 + (wordCount * 60 / 238);
+      return Math.max(30, Math.ceil(estimatedSeconds / 5) * 5);
+    }
+
+    function getUsedIds() {
+      try {
+        return JSON.parse(sessionStorage.getItem(USED_KEY) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setUsedIds(ids) {
+      sessionStorage.setItem(USED_KEY, JSON.stringify(ids));
+    }
+
+    function pickRandomCase() {
+      const pool = Array.isArray(window.CASES) ? window.CASES : [];
+      if (!pool.length) return null;
+      let used = getUsedIds();
+      let available = pool.filter(function (c) { return used.indexOf(c.id) === -1; });
+      if (!available.length) {
+        used = [];
+        available = pool.slice();
+      }
+      const pick = available[Math.floor(Math.random() * available.length)];
+      used.push(pick.id);
+      setUsedIds(used);
+      return pick;
+    }
+
+    function clearTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+    }
+
+    function startTimer(seconds, onDone, nextLabel) {
+      clearTimer();
+      remaining = seconds;
+      renderTimer();
+      timerId = setInterval(function () {
+        remaining -= 1;
+        if (remaining <= 0) {
+          remaining = 0;
+          renderTimer();
+          clearTimer();
+          if (nextLabel === "Compare your work") {
+            pendingTimeUpNotice = "";
+          } else {
+            pendingTimeUpNotice = "Time’s up — " + nextLabel + " starts now.";
+            triggerScreenFlash();
+          }
+          onDone();
+          return;
+        }
+        renderTimer();
+      }, 1000);
+    }
+
+    function renderTimer() {
+      const el = document.getElementById("timer");
+      if (!el) return;
+      el.textContent = formatTime(remaining);
+      el.classList.toggle("caution", remaining <= 15 && remaining > 5);
+      el.classList.toggle("urgent", remaining <= 5);
+    }
+
+    function timeUpNoticeHtml() {
+      if (!pendingTimeUpNotice) return "";
+      const message = pendingTimeUpNotice;
+      pendingTimeUpNotice = "";
+      setTimeout(function () {
+        const notice = document.getElementById("time-up-notice");
+        if (!notice) return;
+        notice.classList.add("is-hidden");
+        setTimeout(function () { notice.remove(); }, 280);
+      }, 5000);
+      return '<div class="time-up-notice" id="time-up-notice" role="status" aria-live="polite">' + escapeHtml(message) + "</div>";
+    }
+
+    function triggerScreenFlash() {
+      if (!flashEnabled || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const flash = document.createElement("div");
+      flash.className = "screen-flash";
+      flash.setAttribute("aria-hidden", "true");
+      document.body.appendChild(flash);
+      setTimeout(function () { flash.remove(); }, 700);
+    }
+
+    function showCompletionOverlay() {
+      const overlay = document.createElement("div");
+      overlay.className = "completion-overlay";
+      overlay.setAttribute("role", "status");
+      overlay.setAttribute("aria-live", "polite");
+      overlay.innerHTML = "<span>You’re done</span>";
+      document.body.appendChild(overlay);
+      setTimeout(function () { overlay.remove(); }, 3050);
+    }
+
+    function updateFlashToggle() {
+      const toggle = document.getElementById("flash-toggle");
+      if (!toggle) return;
+      const copy = document.getElementById("flash-copy");
+      if (copy) copy.textContent = flashEnabled ? "The screen flashes red briefly when time runs out." : "The timeout screen flash is off.";
+      toggle.textContent = flashEnabled ? "Turn off flash" : "Turn on flash";
+      toggle.setAttribute("aria-pressed", String(flashEnabled));
+      toggle.setAttribute("aria-label", (flashEnabled ? "Turn off" : "Turn on") + " the timeout screen flash");
+    }
+
+    function dotsHtml(active) {
+      const idx = PHASES.indexOf(active);
+      return PHASES.map(function (name, i) {
+        const cls = i < idx ? "dot done" : i === idx ? "dot on" : "dot";
+        return '<span class="' + cls + '"></span>';
+      }).join("");
+    }
+
+    function goHome() {
+      clearTimer();
+      currentCase = null;
+      phase = "home";
+      app.innerHTML = [
+        '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>A better way to practice.</h1><p class="lede">Build the habits behind a strong case interview: clarify the ask, create a structure, and communicate with confidence.</p></div></section>',
+        '<div class="flow-heading"><h2>Your practice flow</h2><p>The next stage starts automatically when time runs out. Ready early? Select Next.</p><p class="flash-disclaimer"><span id="flash-copy">The screen flashes red briefly when time runs out.</span> <button class="inline-link" id="flash-toggle" type="button" aria-pressed="true">Turn off flash</button></p></div>',
+        '<div class="steps">',
+        step("1", "Prompt · 0:30–0:45", "You get one look at the case. The timer adjusts to the prompt length."),
+        step("2", "Recap & questions · 1:30", "Restate the problem, then ask clarifying questions."),
+        step("3", "Framework · 2:15", "Build your framework, then move on when you are ready to present."),
+        step("4", "Explain your framework · 2:00", "Walk through the framework as if the interviewer is in the room."),
+        step("5", "Compare your work", "Compare your approach with a sample goal, strong clarifying questions, and an example framework."),
+        "</div>",
+        '<div class="actions"><button class="btn-primary" id="start-btn">Start a practice case <span aria-hidden="true"> →</span></button></div>'
+      ].join("");
+      document.getElementById("start-btn").addEventListener("click", startNewCase);
+      updateFlashToggle();
+      document.getElementById("flash-toggle").addEventListener("click", function () {
+        flashEnabled = !flashEnabled;
+        try { localStorage.setItem(FLASH_KEY, String(flashEnabled)); } catch (e) {}
+        updateFlashToggle();
+      });
+    }
+
+    function step(n, title, body) {
+      return (
+        '<div class="step"><div class="num">' + n + "</div><b>" +
+        title + "</b><span>" + body + "</span></div>"
+      );
+    }
+
+    function startNewCase() {
+      currentCase = pickRandomCase();
+      if (!currentCase) {
+        app.innerHTML = "<p>No cases loaded. Open this folder’s index.html next to cases.js.</p>";
+        return;
+      }
+      showPrompt();
+    }
+
+    function bindSkip(nextFn) {
+      const btn = document.getElementById("advance-btn");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        clearTimer();
+        nextFn();
+      });
+    }
+
+    function stageBar(label, active, timerText) {
+      return (
+        '<div class="stage-bar"><div class="stage-left"><span class="phase-label">' +
+        label + '</span><div class="dots">' + dotsHtml(active) +
+        "</div></div>" +
+        (timerText != null ? '<div class="timer" id="timer">' + timerText + "</div>" : "") +
+        "</div>"
+      );
+    }
+
+    function showPrompt() {
+      phase = "prompt";
+      app.innerHTML = [
+        stageBar("Read the prompt", "prompt", "0:30"),
+        '<div class="prompt-card" id="prompt-text">' + escapeHtml(currentCase.prompt) + "</div>",
+        '<div class="actions"><button class="btn-primary" id="advance-btn">Next</button></div>'
+      ].join("");
+      bindSkip(showRecap);
+      startTimer(promptDuration(currentCase.prompt), showRecap, "Recap & questions");
+    }
+
+    function timedPhase(name, nextFn) {
+      phase = name;
+      const copy = COPY[name];
+      app.innerHTML = [
+        timeUpNoticeHtml(),
+        '<div class="stage-bar practice-stage phase-' + name + '">',
+        '<div class="stage-left"><span class="phase-label">' + copy.label + '</span><div class="dots" aria-label="Step ' + (PHASES.indexOf(name) + 1) + ' of ' + PHASES.length + '">' + dotsHtml(name) + "</div></div>",
+        '<div class="timer" id="timer" role="timer" aria-live="off">' + formatTime(DURATIONS[name]) + "</div>",
+        '<div class="actions"><button class="btn-primary" id="advance-btn">' + (name === "explain" ? "Done" : "Next") + "</button></div>",
+        "</div>"
+      ].join("");
+      bindSkip(nextFn);
+      const nextLabels = { recap: "Build your framework", framework: "Explain your framework", explain: "Compare your work" };
+      startTimer(DURATIONS[name], nextFn, nextLabels[name]);
+    }
+
+    function showRecap() {
+      timedPhase("recap", showFramework);
+    }
+
+    function showFramework() {
+      timedPhase("framework", showExplain);
+    }
+
+    function showExplain() {
+      timedPhase("explain", showDebrief);
+    }
+
+    function showDebrief() {
+      clearTimer();
+      phase = "debrief";
+      pendingTimeUpNotice = "";
+      const questions = (currentCase.goodQuestions || []).map(function (q) {
+        return "<li>" + escapeHtml(q) + "</li>";
+      }).join("");
+      const buckets = (currentCase.framework || []).map(function (bucket) {
+        const points = (bucket.points || []).map(function (p) {
+          return "<li>" + escapeHtml(p) + "</li>";
+        }).join("");
+        return (
+          '<div class="bucket"><div class="bucket-name">' +
+          escapeHtml(bucket.name) + "</div><ul>" + points + "</ul></div>"
+        );
+      }).join("");
+      app.innerHTML = [
+        stageBar("Compare your work", "debrief", null),
+        timeUpNoticeHtml(),
+        '<p class="lede">These are strong examples and guidance. There are many correct answers.</p>',
+        '<div class="debrief">',
+        (currentCase.title ? '<article class="card"><h3>Case name</h3><p>' + escapeHtml(currentCase.title) + "</p></article>" : ""),
+        (currentCase.type ? '<article class="card"><h3>Case type</h3><p>' + escapeHtml(currentCase.type) + "</p></article>" : ""),
+        '<article class="card"><h3>Prompt</h3><p>' + escapeHtml(currentCase.prompt) + "</p></article>",
+        '<article class="card"><h3>Goal of the case</h3><p>' + escapeHtml(currentCase.goal) + "</p></article>",
+        '<article class="card"><h3>Good clarifying questions</h3><ul>' + questions + "</ul></article>",
+        '<article class="card"><h3>Example framework</h3>' + buckets + "</article>",
+        "</div>",
+        '<div class="actions">',
+        '<button class="btn-primary" id="new-btn">New random case</button>',
+        '<button class="btn-secondary" id="instructions-btn" type="button">Instructions</button>',
+        "</div>"
+      ].join("");
+      document.getElementById("new-btn").addEventListener("click", startNewCase);
+      document.getElementById("instructions-btn").addEventListener("click", goHome);
+      showCompletionOverlay();
+    }
+
+    async function sha256Hex(text) {
+      if (window.crypto && window.crypto.subtle) {
+        const data = new TextEncoder().encode(text);
+        const buf = await crypto.subtle.digest("SHA-256", data);
+        return Array.from(new Uint8Array(buf))
+          .map(function (b) { return b.toString(16).padStart(2, "0"); })
+          .join("");
+      }
+      return sha256HexFallback(text);
+    }
+
+    // Fallback for file:// / non-secure contexts where SubtleCrypto is unavailable
+    function sha256HexFallback(message) {
+      function rightRotate(value, amount) {
+        return (value >>> amount) | (value << (32 - amount));
+      }
+      var mathPow = Math.pow;
+      var maxWord = mathPow(2, 32);
+      var lengthProperty = "length";
+      var i, j;
+      var result = "";
+      var words = [];
+      var asciiBitLength = message[lengthProperty] * 8;
+      var hash = [];
+      var k = [];
+      var primeCounter = 0;
+      var isComposite = {};
+      for (var candidate = 2; primeCounter < 64; candidate++) {
+        if (!isComposite[candidate]) {
+          for (i = 0; i < 313; i += candidate) isComposite[i] = candidate;
+          hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+          k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+        }
+      }
+      message += "\x80";
+      while ((message[lengthProperty] % 64) - 56) message += "\x00";
+      for (i = 0; i < message[lengthProperty]; i++) {
+        j = message.charCodeAt(i);
+        if (j >> 8) return "";
+        words[i >> 2] |= j << (((3 - i) % 4) * 8);
+      }
+      words[words[lengthProperty]] = (asciiBitLength / maxWord) | 0;
+      words[words[lengthProperty]] = asciiBitLength;
+      for (j = 0; j < words[lengthProperty];) {
+        var w = words.slice(j, (j += 16));
+        var oldHash = hash.slice(0);
+        for (i = 0; i < 64; i++) {
+          var w15 = w[i - 15], w2 = w[i - 2];
+          var a = hash[0], e = hash[4];
+          var temp1 =
+            hash[7] +
+            (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) +
+            ((e & hash[5]) ^ (~e & hash[6])) +
+            k[i] +
+            (w[i] =
+              i < 16
+                ? w[i]
+                : (w[i - 16] +
+                    (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) +
+                    w[i - 7] +
+                    (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) |
+                  0);
+          var temp2 =
+            (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) +
+            ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+          hash = [(temp1 + temp2) | 0].concat(hash);
+          hash[4] = (hash[4] + temp1) | 0;
+          hash.pop();
+        }
+        for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+      }
+      for (i = 0; i < 8; i++) {
+        for (j = 3; j + 1; j--) {
+          var b = (hash[i] >> (j * 8)) & 255;
+          result += (b < 16 ? "0" : "") + b.toString(16);
+        }
+      }
+      return result;
+    }
+
+    function isSessionUnlocked() {
+      try {
+        return sessionStorage.getItem(AUTH_KEY) === "1";
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function unlockSession() {
+      try {
+        sessionStorage.setItem(AUTH_KEY, "1");
+      } catch (e) {}
+    }
+
+    function hideGate() {
+      const gate = document.getElementById("gate");
+      if (gate) gate.hidden = true;
+      document.body.classList.remove("is-gated");
+    }
+
+    function initApp() {
+      goHome();
+      document.getElementById("home-btn").addEventListener("click", goHome);
+    }
+
+    async function handleGateSubmit(event) {
+      event.preventDefault();
+      const input = document.getElementById("gate-password");
+      const error = document.getElementById("gate-error");
+      const submitBtn = event.target.querySelector('button[type="submit"]');
+      if (!input) return;
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const hash = await sha256Hex(input.value);
+        if (hash === AUTH_HASH) {
+          if (error) error.hidden = true;
+          unlockSession();
+          hideGate();
+          initApp();
+          return;
+        }
+        if (error) error.hidden = false;
+        input.value = "";
+        input.focus();
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    if (isSessionUnlocked()) {
+      hideGate();
+      initApp();
+    } else {
+      const form = document.getElementById("gate-form");
+      if (form) form.addEventListener("submit", handleGateSubmit);
+    }
+  </script>
+</body>
+</html>
