@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Framework Practice</title>
-  <script src="cases.js"></script>
   <style>
     :root {
       --smu-blue: #354CA1;
@@ -404,8 +403,7 @@
     const USED_KEY = "frameworkPracticeUsedIds";
     const FLASH_KEY = "frameworkPracticeFlashEnabled";
     const AUTH_KEY = "frameworkPracticeUnlocked";
-    // SHA-256 of the club password (plain text is not stored in this file)
-    const AUTH_HASH = "6334aee1bf3396e07683a3e0dbcfc68c368cd85960977504ea0539f3578524c1";
+    const CASES_KEY = "frameworkPracticeCases";
     const PHASES = ["prompt", "recap", "framework", "explain", "debrief"];
     const DURATIONS = {
       recap: 90,
@@ -700,98 +698,31 @@
       showCompletionOverlay();
     }
 
-    async function sha256Hex(text) {
-      if (window.crypto && window.crypto.subtle) {
-        const data = new TextEncoder().encode(text);
-        const buf = await crypto.subtle.digest("SHA-256", data);
-        return Array.from(new Uint8Array(buf))
-          .map(function (b) { return b.toString(16).padStart(2, "0"); })
-          .join("");
+    function loadCachedCases() {
+      try {
+        const raw = sessionStorage.getItem(CASES_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : null;
+      } catch (e) {
+        return null;
       }
-      return sha256HexFallback(text);
     }
 
-    // Fallback for file:// / non-secure contexts where SubtleCrypto is unavailable
-    function sha256HexFallback(message) {
-      function rightRotate(value, amount) {
-        return (value >>> amount) | (value << (32 - amount));
-      }
-      var mathPow = Math.pow;
-      var maxWord = mathPow(2, 32);
-      var lengthProperty = "length";
-      var i, j;
-      var result = "";
-      var words = [];
-      var asciiBitLength = message[lengthProperty] * 8;
-      var hash = [];
-      var k = [];
-      var primeCounter = 0;
-      var isComposite = {};
-      for (var candidate = 2; primeCounter < 64; candidate++) {
-        if (!isComposite[candidate]) {
-          for (i = 0; i < 313; i += candidate) isComposite[i] = candidate;
-          hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
-          k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
-        }
-      }
-      message += "\x80";
-      while ((message[lengthProperty] % 64) - 56) message += "\x00";
-      for (i = 0; i < message[lengthProperty]; i++) {
-        j = message.charCodeAt(i);
-        if (j >> 8) return "";
-        words[i >> 2] |= j << (((3 - i) % 4) * 8);
-      }
-      words[words[lengthProperty]] = (asciiBitLength / maxWord) | 0;
-      words[words[lengthProperty]] = asciiBitLength;
-      for (j = 0; j < words[lengthProperty];) {
-        var w = words.slice(j, (j += 16));
-        var oldHash = hash.slice(0);
-        for (i = 0; i < 64; i++) {
-          var w15 = w[i - 15], w2 = w[i - 2];
-          var a = hash[0], e = hash[4];
-          var temp1 =
-            hash[7] +
-            (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) +
-            ((e & hash[5]) ^ (~e & hash[6])) +
-            k[i] +
-            (w[i] =
-              i < 16
-                ? w[i]
-                : (w[i - 16] +
-                    (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) +
-                    w[i - 7] +
-                    (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) |
-                  0);
-          var temp2 =
-            (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) +
-            ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
-          hash = [(temp1 + temp2) | 0].concat(hash);
-          hash[4] = (hash[4] + temp1) | 0;
-          hash.pop();
-        }
-        for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
-      }
-      for (i = 0; i < 8; i++) {
-        for (j = 3; j + 1; j--) {
-          var b = (hash[i] >> (j * 8)) & 255;
-          result += (b < 16 ? "0" : "") + b.toString(16);
-        }
-      }
-      return result;
+    function cacheCases(cases) {
+      window.CASES = cases;
+      try {
+        sessionStorage.setItem(AUTH_KEY, "1");
+        sessionStorage.setItem(CASES_KEY, JSON.stringify(cases));
+      } catch (e) {}
     }
 
     function isSessionUnlocked() {
       try {
-        return sessionStorage.getItem(AUTH_KEY) === "1";
+        return sessionStorage.getItem(AUTH_KEY) === "1" && !!loadCachedCases();
       } catch (e) {
         return false;
       }
-    }
-
-    function unlockSession() {
-      try {
-        sessionStorage.setItem(AUTH_KEY, "1");
-      } catch (e) {}
     }
 
     function hideGate() {
@@ -805,6 +736,25 @@
       document.getElementById("home-btn").addEventListener("click", goHome);
     }
 
+    async function fetchCasesWithPassword(password) {
+      const response = await fetch("/api/cases", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: password })
+      });
+      if (response.status === 401) {
+        return { ok: false, reason: "unauthorized" };
+      }
+      if (!response.ok) {
+        return { ok: false, reason: "error" };
+      }
+      const data = await response.json();
+      if (!data || !Array.isArray(data.cases)) {
+        return { ok: false, reason: "error" };
+      }
+      return { ok: true, cases: data.cases };
+    }
+
     async function handleGateSubmit(event) {
       event.preventDefault();
       const input = document.getElementById("gate-password");
@@ -812,24 +762,38 @@
       const submitBtn = event.target.querySelector('button[type="submit"]');
       if (!input) return;
       if (submitBtn) submitBtn.disabled = true;
+      if (error) {
+        error.hidden = true;
+        error.textContent = "Incorrect password. Try again.";
+      }
       try {
-        const hash = await sha256Hex(input.value);
-        if (hash === AUTH_HASH) {
-          if (error) error.hidden = true;
-          unlockSession();
+        const result = await fetchCasesWithPassword(input.value);
+        if (result.ok) {
+          cacheCases(result.cases);
           hideGate();
           initApp();
           return;
         }
-        if (error) error.hidden = false;
+        if (error) {
+          error.textContent = result.reason === "unauthorized"
+            ? "Incorrect password. Try again."
+            : "Could not unlock. Check the site setup and try again.";
+          error.hidden = false;
+        }
         input.value = "";
         input.focus();
+      } catch (e) {
+        if (error) {
+          error.textContent = "Could not reach the server. Try again.";
+          error.hidden = false;
+        }
       } finally {
         if (submitBtn) submitBtn.disabled = false;
       }
     }
 
     if (isSessionUnlocked()) {
+      window.CASES = loadCachedCases();
       hideGate();
       initApp();
     } else {

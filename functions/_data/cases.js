@@ -1,4 +1,4 @@
-window.CASES = [
+export const CASES = [
   {
     id: "airline-oil",
     title: "Airline Oil Price",
@@ -757,3 +757,4 @@ window.CASES = [
     ]
   }
 ];
+
