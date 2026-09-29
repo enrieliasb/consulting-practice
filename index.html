@@ -323,6 +323,9 @@
       border: 1px solid #e8e8ed; border-radius: 10px; background: #fff; color: #1d1d1f;
     }
     .session-note { text-align: center; color: #86868b; font-size: 13px; margin: 18px 0 0; }
+    .timer.count-up::after { content: "ELAPSED"; }
+    .filters { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 0 auto 22px; }
+    .filters .filter-row { margin: 0; }
     @media (max-width: 700px) {
       main { width: min(100% - 36px, 980px); padding: 50px 0 64px; }
       header { gap: 8px; padding: 0 15px; }
@@ -538,11 +541,19 @@
     const USED_KEY = "frameworkPracticeUsedIds";
     const FLASH_KEY = "frameworkPracticeFlashEnabled";
     const AUTH_KEY = "frameworkPracticeUnlocked";
-    const CASES_KEY = "frameworkPracticeCases";
+    const CASES_KEY = "frameworkPracticeCasesV2";
     const SEEN_OPENING_KEY = "frameworkPracticeSeenOpening";
+    const SEEN_MATH_KEY = "frameworkPracticeSeenMath";
+    const SEEN_CREATIVE_KEY = "frameworkPracticeSeenCreative";
     const TYPE_FILTER_KEY = "frameworkPracticeTypeFilter";
+    const MATH_KIND_KEY = "frameworkPracticeMathKind";
     const SESSION_COUNT_KEY = "frameworkPracticeSessionCount";
+    const MATH_USED_KEY = "frameworkPracticeMathUsedIds";
+    const CREATIVE_USED_KEY = "frameworkPracticeCreativeUsedIds";
+    const MATH_SESSION_KEY = "frameworkPracticeMathSessionCount";
+    const CREATIVE_SESSION_KEY = "frameworkPracticeCreativeSessionCount";
     const PHASES = ["prompt", "recap", "framework", "explain", "debrief"];
+    const BACK_PHASES = ["work", "debrief"];
     const DURATIONS = {
       recap: 90,
       framework: 135,
@@ -565,10 +576,14 @@
     };
 
     let currentCase = null;
+    let currentMath = null;
     let phase = "home";
     let selectedType = "any";
     try { selectedType = sessionStorage.getItem(TYPE_FILTER_KEY) || "any"; } catch (e) {}
+    let selectedMathKind = "any";
+    try { selectedMathKind = sessionStorage.getItem(MATH_KIND_KEY) || "any"; } catch (e) {}
     let remaining = 0;
+    let elapsed = 0;
     let timerId = null;
     let pendingTimeUpNotice = "";
     let flashEnabled = true;
@@ -627,6 +642,74 @@
       return pick;
     }
 
+    function getStoredIds(key) {
+      try {
+        return JSON.parse(sessionStorage.getItem(key) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setStoredIds(key, ids) {
+      try { sessionStorage.setItem(key, JSON.stringify(ids)); } catch (e) {}
+    }
+
+    function mathPool() {
+      const items = [];
+      const cases = Array.isArray(window.CASES) ? window.CASES : [];
+      cases.forEach(function (c) {
+        (c.math || []).forEach(function (q, i) {
+          if (selectedType !== "any" && c.type !== selectedType) return;
+          if (selectedMathKind !== "any" && q.kind !== selectedMathKind) return;
+          items.push({ id: c.id + ":math:" + i, case: c, question: q });
+        });
+      });
+      return items;
+    }
+
+    function creativePool() {
+      const cases = Array.isArray(window.CASES) ? window.CASES : [];
+      const typed = selectedType === "any"
+        ? cases
+        : cases.filter(function (c) { return c.type === selectedType; });
+      const withCreative = typed.filter(function (c) { return c.creative && c.creative.prompt; });
+      return withCreative.length ? withCreative : cases.filter(function (c) { return c.creative && c.creative.prompt; });
+    }
+
+    function pickFromPool(pool, usedKey, idFn) {
+      if (!pool.length) return null;
+      let used = getStoredIds(usedKey);
+      let available = pool.filter(function (item) { return used.indexOf(idFn(item)) === -1; });
+      if (!available.length) {
+        const ids = pool.map(idFn);
+        used = used.filter(function (id) { return ids.indexOf(id) === -1; });
+        available = pool.slice();
+      }
+      const pick = available[Math.floor(Math.random() * available.length)];
+      used.push(idFn(pick));
+      setStoredIds(usedKey, used);
+      return pick;
+    }
+
+    function pickRandomMath() {
+      let pool = mathPool();
+      if (!pool.length && (selectedType !== "any" || selectedMathKind !== "any")) {
+        const savedType = selectedType;
+        const savedKind = selectedMathKind;
+        selectedType = "any";
+        selectedMathKind = "any";
+        pool = mathPool();
+        selectedType = savedType;
+        selectedMathKind = savedKind;
+      }
+      return pickFromPool(pool, MATH_USED_KEY, function (item) { return item.id; });
+    }
+
+    function pickRandomCreative() {
+      const pool = creativePool();
+      return pickFromPool(pool, CREATIVE_USED_KEY, function (c) { return c.id; });
+    }
+
     function caseTypes() {
       const pool = Array.isArray(window.CASES) ? window.CASES : [];
       const types = [];
@@ -663,24 +746,75 @@
       });
     }
 
-    function getSessionCount() {
+    function mathKindFilterHtml() {
+      const options = [
+        ["any", "Any math (random)"],
+        ["definite", "Definite answer"],
+        ["market-sizing", "Market sizing"]
+      ].map(function (pair) {
+        return '<option value="' + pair[0] + '"' +
+          (pair[0] === selectedMathKind ? " selected" : "") + ">" + pair[1] + "</option>";
+      });
+      return (
+        '<div class="filter-row"><label for="math-kind-filter">Math type</label>' +
+        '<select id="math-kind-filter">' + options.join("") + "</select></div>"
+      );
+    }
+
+    function bindMathKindFilter() {
+      const select = document.getElementById("math-kind-filter");
+      if (!select) return;
+      select.addEventListener("change", function () {
+        selectedMathKind = select.value || "any";
+        try { sessionStorage.setItem(MATH_KIND_KEY, selectedMathKind); } catch (e) {}
+      });
+    }
+
+    function getStoredCount(key) {
       try {
-        return parseInt(sessionStorage.getItem(SESSION_COUNT_KEY) || "0", 10) || 0;
+        return parseInt(sessionStorage.getItem(key) || "0", 10) || 0;
       } catch (e) {
         return 0;
       }
     }
 
-    function bumpSessionCount() {
-      try {
-        sessionStorage.setItem(SESSION_COUNT_KEY, String(getSessionCount() + 1));
-      } catch (e) {}
+    function bumpStoredCount(key) {
+      try { sessionStorage.setItem(key, String(getStoredCount(key) + 1)); } catch (e) {}
     }
 
-    function sessionNoteHtml() {
-      const n = getSessionCount();
-      if (!n) return "";
-      return '<p class="session-note">' + n + " opening" + (n === 1 ? "" : "s") + " this sitting</p>";
+    function getSessionCount() {
+      return getStoredCount(SESSION_COUNT_KEY);
+    }
+
+    function bumpSessionCount() {
+      bumpStoredCount(SESSION_COUNT_KEY);
+    }
+
+    function sessionNoteHtml(track) {
+      if (track === "math") {
+        const n = getStoredCount(MATH_SESSION_KEY);
+        if (!n) return "";
+        return '<p class="session-note">' + n + " math drill" + (n === 1 ? "" : "s") + " this sitting</p>";
+      }
+      if (track === "creative") {
+        const n = getStoredCount(CREATIVE_SESSION_KEY);
+        if (!n) return "";
+        return '<p class="session-note">' + n + " creative drill" + (n === 1 ? "" : "s") + " this sitting</p>";
+      }
+      if (track === "opening") {
+        const n = getSessionCount();
+        if (!n) return "";
+        return '<p class="session-note">' + n + " opening" + (n === 1 ? "" : "s") + " this sitting</p>";
+      }
+      const bits = [];
+      const openings = getSessionCount();
+      const maths = getStoredCount(MATH_SESSION_KEY);
+      const creatives = getStoredCount(CREATIVE_SESSION_KEY);
+      if (openings) bits.push(openings + " opening" + (openings === 1 ? "" : "s"));
+      if (maths) bits.push(maths + " math");
+      if (creatives) bits.push(creatives + " creative");
+      if (!bits.length) return "";
+      return '<p class="session-note">' + bits.join(" · ") + " this sitting</p>";
     }
 
     function hasSeenOpening() {
@@ -691,8 +825,24 @@
       try { localStorage.setItem(SEEN_OPENING_KEY, "1"); } catch (e) {}
     }
 
+    function hasSeenMath() {
+      try { return localStorage.getItem(SEEN_MATH_KEY) === "1"; } catch (e) { return false; }
+    }
+
+    function markMathSeen() {
+      try { localStorage.setItem(SEEN_MATH_KEY, "1"); } catch (e) {}
+    }
+
+    function hasSeenCreative() {
+      try { return localStorage.getItem(SEEN_CREATIVE_KEY) === "1"; } catch (e) { return false; }
+    }
+
+    function markCreativeSeen() {
+      try { localStorage.setItem(SEEN_CREATIVE_KEY, "1"); } catch (e) {}
+    }
+
     function isLiveDrill() {
-      return ["prompt", "recap", "framework", "explain"].indexOf(phase) !== -1;
+      return ["prompt", "recap", "framework", "explain", "math-work", "creative-work"].indexOf(phase) !== -1;
     }
 
     function leaveDrill(nextFn) {
@@ -700,9 +850,10 @@
         nextFn();
         return;
       }
-      if (window.confirm("Leave this case? The timer will stop and you will lose this opening.")) {
+      if (window.confirm("Leave this case? The timer will stop and you will lose this drill.")) {
         clearTimer();
         currentCase = null;
+        currentMath = null;
         nextFn();
       }
     }
@@ -710,6 +861,15 @@
     function startOpeningFromHome() {
       if (hasSeenOpening()) startNewCase();
       else goFrontHalf();
+    }
+
+    function startMathFromHub() {
+      if (hasSeenMath()) startNewMath();
+      else goMathInstructions();
+    }
+
+    function startCreativeFromHub() {
+      goBackHalf();
     }
 
     function clearTimer() {
@@ -742,12 +902,32 @@
       }, 1000);
     }
 
+    function startCountUpTimer() {
+      clearTimer();
+      elapsed = 0;
+      renderCountUp();
+      timerId = setInterval(function () {
+        elapsed += 1;
+        renderCountUp();
+      }, 1000);
+    }
+
     function renderTimer() {
       const el = document.getElementById("timer");
       if (!el) return;
+      el.classList.remove("count-up");
       el.textContent = formatTime(remaining);
       el.classList.toggle("caution", remaining <= 15 && remaining > 5);
       el.classList.toggle("urgent", remaining <= 5);
+    }
+
+    function renderCountUp() {
+      const el = document.getElementById("timer");
+      if (!el) return;
+      el.classList.add("count-up");
+      el.textContent = formatTime(elapsed);
+      el.classList.toggle("caution", elapsed >= 300 && elapsed < 360);
+      el.classList.toggle("urgent", elapsed >= 360);
     }
 
     function timeUpNoticeHtml() {
@@ -800,17 +980,34 @@
       }).join("");
     }
 
+    function backDotsHtml(active) {
+      const idx = BACK_PHASES.indexOf(active);
+      return BACK_PHASES.map(function (name, i) {
+        const cls = i < idx ? "dot done" : i === idx ? "dot on" : "dot";
+        return '<span class="' + cls + '"></span>';
+      }).join("");
+    }
+
     function homeHero() {
-      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Case interview practice.</h1><p class="lede">Timed drills you can run on your own. Start with the case opening, then use math and creative when those are ready.</p></div></section>';
+      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Case interview practice.</h1><p class="lede">Timed drills you can run on your own. Start with the case opening, then use math to practice the quantitative back half.</p></div></section>';
     }
 
     function openingHero() {
       return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice the opening of a case interview.</h1><p class="lede">A timed drill for the first minutes of a case: hear the prompt, structure your thinking, and explain it out loud.</p></div></section>';
     }
 
+    function mathHero() {
+      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice case math.</h1><p class="lede">Work a keyed quantitative question or a market size on paper. The clock counts up. Aim to finish in under five minutes, then compare with a sample answer.</p></div></section>';
+    }
+
+    function creativeHero() {
+      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice case brainstorming.</h1><p class="lede">Bucket your ideas first, then add volume. The clock counts up. When you finish, compare with a strong example.</p></div></section>';
+    }
+
     function goMenu() {
       clearTimer();
       currentCase = null;
+      currentMath = null;
       phase = "home";
       app.innerHTML = [
         homeHero(),
@@ -822,17 +1019,19 @@
         typeFilterHtml(),
         '<div class="track-grid">',
         '<div class="track-slot"><article class="track-card"><span class="track-kicker">Front half</span><b>Case opening</b><span>Prompt, recap, framework, and explain.</span></article><button class="btn-primary" id="home-start-btn" type="button">Start case opening <span aria-hidden="true"> →</span></button></div>',
-        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Back half</span><b>Math and creative</b><span>Quantitative and brainstorming work after the structure.</span></article><button class="btn-disabled" type="button" disabled>Coming soon</button></div>',
+        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Back half</span><b>Math and creative</b><span>Quantitative and brainstorming work after the structure.</span></article><button class="btn-primary" id="home-back-btn" type="button">Start back half <span aria-hidden="true"> →</span></button></div>',
         "</div>",
         sessionNoteHtml()
       ].join("");
       bindTypeFilter();
       document.getElementById("home-start-btn").addEventListener("click", startOpeningFromHome);
+      document.getElementById("home-back-btn").addEventListener("click", goBackHalf);
     }
 
     function goFrontHalf() {
       clearTimer();
       currentCase = null;
+      currentMath = null;
       phase = "front";
       app.innerHTML = [
         openingHero(),
@@ -861,16 +1060,50 @@
     function goBackHalf() {
       clearTimer();
       currentCase = null;
+      currentMath = null;
       phase = "back";
       app.innerHTML = [
-        '<div class="flow-heading"><h2>Back half</h2><p>Math and creative work after you have a structure.</p></div>',
-        '<div class="coming-grid">',
-        '<article class="coming-card"><span class="coming-kicker">Back half</span><b>Math</b><p>Sizing, rates, and other quantitative work in the case.</p><span class="coming-soon">Coming soon</span></article>',
-        '<article class="coming-card"><span class="coming-kicker">Back half</span><b>Creative</b><p>Brainstorming ideas after you have a structure.</p><span class="coming-soon">Coming soon</span></article>',
+        '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice the back half of a case.</h1><p class="lede">After you have a structure, interviewers test quantitative work. Start math now. Creative brainstorming is not open yet.</p></div></section>',
+        typeFilterHtml(),
+        '<div class="track-grid">',
+        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Back half</span><b>Math</b><span>Keyed numbers and market sizing. The clock counts up. Aim for under five minutes.</span></article><button class="btn-primary" id="math-start-btn" type="button">Start math <span aria-hidden="true"> →</span></button></div>',
+        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Back half</span><b>Creative</b><span>Brainstorm ideas after you have a structure.</span></article><button class="btn-disabled" type="button" disabled>Coming soon</button></div>',
         "</div>",
+        sessionNoteHtml(),
         '<div class="actions"><button class="inline-link" id="back-menu-btn" type="button">Back to home</button></div>'
       ].join("");
+      bindTypeFilter();
+      document.getElementById("math-start-btn").addEventListener("click", startMathFromHub);
       document.getElementById("back-menu-btn").addEventListener("click", goMenu);
+    }
+
+    function goMathInstructions() {
+      clearTimer();
+      currentCase = null;
+      currentMath = null;
+      phase = "math-front";
+      app.innerHTML = [
+        mathHero(),
+        '<div class="home-story"><p>You get a self-contained quantitative question from a real case — either a problem with one keyed number or a market size. The numbers stay on screen. Work it out loud on paper. The timer counts up so you can see how long you took. When you are ready, compare with a sample answer and the steps behind it.</p></div>',
+        '<div class="filters">',
+        typeFilterHtml(),
+        mathKindFilterHtml(),
+        "</div>",
+        '<div class="flow-heading"><h2>Your practice flow</h2><p>There is no automatic cutoff. Aim to finish in under five minutes, then select Done.</p></div>',
+        '<div class="steps">',
+        step("1", "Read the question", "The prompt and all numbers stay visible. Capture the ask and the units."),
+        step("2", "Work the math · count up, aim under 5 minutes", "Write the formula first, then plug in numbers. Talk through every step."),
+        step("3", "Compare your work", "Check your number and logic against a sample answer. Market sizes can differ; compare the method."),
+        "</div>",
+        '<div class="actions"><button class="btn-primary" id="start-btn">Start math <span aria-hidden="true"> →</span></button></div>'
+      ].join("");
+      bindTypeFilter();
+      bindMathKindFilter();
+      document.getElementById("start-btn").addEventListener("click", startNewMath);
+    }
+
+    function goCreativeInstructions() {
+      goBackHalf();
     }
 
     function step(n, title, body) {
@@ -882,12 +1115,154 @@
 
     function startNewCase() {
       markOpeningSeen();
+      currentMath = null;
       currentCase = pickRandomCase();
       if (!currentCase) {
         app.innerHTML = "<p>No cases loaded.</p>";
         return;
       }
       showPrompt();
+    }
+
+    function startNewMath() {
+      const pick = pickRandomMath();
+      if (!pick) {
+        app.innerHTML = "<p>No math drills loaded.</p>";
+        return;
+      }
+      markMathSeen();
+      currentCase = pick.case;
+      currentMath = pick.question;
+      showMathWork();
+    }
+
+    function startNewCreative() {
+      goBackHalf();
+    }
+
+    function backStageBar(label, active, hint) {
+      return [
+        '<div class="stage-bar">',
+        '<div class="stage-left"><span class="phase-label">' + label + '</span>',
+        (hint ? '<p class="stage-hint">' + hint + "</p>" : ""),
+        '<div class="dots" aria-label="Step ' + (BACK_PHASES.indexOf(active) + 1) + ' of ' + BACK_PHASES.length + '">' + backDotsHtml(active) + "</div></div>",
+        '<div class="timer count-up" id="timer" role="timer" aria-live="off">0:00</div>',
+        "</div>"
+      ].join("");
+    }
+
+    function showMathWork() {
+      phase = "math-work";
+      elapsed = 0;
+      const hint = currentMath.kind === "market-sizing"
+        ? "State your assumptions, then size top-down or bottom-up. Aim for under 5 minutes."
+        : "Write the formula first, then plug in numbers. Aim for under 5 minutes.";
+      app.innerHTML = [
+        backStageBar("Work the math", "work", hint),
+        '<p class="prompt-hint">The numbers stay on screen. Talk through every step out loud.</p>',
+        '<div class="prompt-card">' + escapeHtml(currentMath.prompt) + "</div>",
+        '<div class="actions"><button class="btn-primary" id="advance-btn">Done</button></div>'
+      ].join("");
+      bindSkip(showMathDebrief);
+      startCountUpTimer();
+    }
+
+    function showCreativeWork() {
+      phase = "creative-work";
+      elapsed = 0;
+      app.innerHTML = [
+        backStageBar("Brainstorm", "work", "Name two or three buckets, then fill them. The interviewer may ask “what else?”"),
+        '<p class="prompt-hint">The prompt stays on screen. Structure first, then volume.</p>',
+        '<div class="prompt-card">' + escapeHtml(currentCase.creative.prompt) + "</div>",
+        '<div class="actions"><button class="btn-primary" id="advance-btn">Done</button></div>'
+      ].join("");
+      bindSkip(showCreativeDebrief);
+      startCountUpTimer();
+    }
+
+    function showMathDebrief() {
+      clearTimer();
+      phase = "math-debrief";
+      bumpStoredCount(MATH_SESSION_KEY);
+      const isSizing = currentMath.kind === "market-sizing";
+      const checks = isSizing
+        ? [
+            "I stated my assumptions out loud",
+            "I used a top-down or bottom-up structure",
+            "I sense-checked the magnitude"
+          ]
+        : [
+            "I wrote the formula before plugging in numbers",
+            "I stated the units",
+            "I sense-checked the magnitude"
+          ];
+      const steps = (currentMath.steps || []).map(function (s) {
+        return "<li>" + escapeHtml(s) + "</li>";
+      }).join("");
+      const checkHtml = checks.map(function (c) {
+        return '<label><input type="checkbox" /> ' + escapeHtml(c) + "</label>";
+      }).join("");
+      app.innerHTML = [
+        '<div class="stage-bar"><div class="stage-left"><span class="phase-label">Compare your work</span><div class="dots">' + backDotsHtml("debrief") + "</div></div></div>",
+        '<p class="lede">' + (isSizing
+          ? "This is a sample size and method. Your number can differ; compare the logic."
+          : "This is a keyed example. Check your number and the steps behind it.") + "</p>",
+        '<div class="debrief">',
+        '<article class="card check-card"><h3>Quick self-check</h3>' + checkHtml + "</article>",
+        (currentCase.title ? '<article class="card"><h3>Case name</h3><p>' + escapeHtml(currentCase.title) + "</p></article>" : ""),
+        (currentCase.type ? '<article class="card"><h3>Case type</h3><p>' + escapeHtml(currentCase.type) + "</p></article>" : ""),
+        '<article class="card"><h3>Question</h3><p>' + escapeHtml(currentMath.prompt) + "</p></article>",
+        '<article class="card"><h3>Sample answer</h3><p>' + escapeHtml(currentMath.answer) + "</p></article>",
+        '<article class="card"><h3>Example steps</h3><ul>' + steps + "</ul></article>",
+        (currentMath.insight ? '<article class="card"><h3>So what</h3><p>' + escapeHtml(currentMath.insight) + "</p></article>" : ""),
+        "</div>",
+        sessionNoteHtml("math"),
+        '<div class="actions">',
+        '<button class="btn-primary" id="new-btn">Next case</button>',
+        '<button class="btn-secondary" id="instructions-btn" type="button">Instructions</button>',
+        "</div>"
+      ].join("");
+      document.getElementById("new-btn").addEventListener("click", startNewMath);
+      document.getElementById("instructions-btn").addEventListener("click", goMathInstructions);
+      showCompletionOverlay();
+    }
+
+    function showCreativeDebrief() {
+      clearTimer();
+      phase = "creative-debrief";
+      bumpStoredCount(CREATIVE_SESSION_KEY);
+      const buckets = (currentCase.creative.buckets || []).map(function (bucket) {
+        const points = (bucket.points || []).map(function (p) {
+          return "<li>" + escapeHtml(p) + "</li>";
+        }).join("");
+        return (
+          '<div class="bucket"><div class="bucket-name">' +
+          escapeHtml(bucket.name) + "</div><ul>" + points + "</ul></div>"
+        );
+      }).join("");
+      app.innerHTML = [
+        '<div class="stage-bar"><div class="stage-left"><span class="phase-label">Compare your work</span><div class="dots">' + backDotsHtml("debrief") + "</div></div></div>",
+        '<p class="lede">These are strong examples. There are many correct lists — compare your buckets and coverage.</p>',
+        '<div class="debrief">',
+        '<article class="card check-card"><h3>Quick self-check</h3>',
+        '<label><input type="checkbox" /> I bucketed my ideas before listing them</label>',
+        '<label><input type="checkbox" /> I generated more than one bucket</label>',
+        '<label><input type="checkbox" /> I can explain why each idea helps</label>',
+        "</article>",
+        (currentCase.title ? '<article class="card"><h3>Case name</h3><p>' + escapeHtml(currentCase.title) + "</p></article>" : ""),
+        (currentCase.type ? '<article class="card"><h3>Case type</h3><p>' + escapeHtml(currentCase.type) + "</p></article>" : ""),
+        '<article class="card"><h3>Question</h3><p>' + escapeHtml(currentCase.creative.prompt) + "</p></article>",
+        '<article class="card"><h3>Example ideas</h3>' + buckets + "</article>",
+        "</div>",
+        sessionNoteHtml("creative"),
+        '<div class="actions">',
+        '<button class="btn-primary" id="new-btn">Next case</button>',
+        '<button class="btn-secondary" id="instructions-btn" type="button">Instructions</button>',
+        "</div>"
+      ].join("");
+      document.getElementById("new-btn").addEventListener("click", startNewCreative);
+      document.getElementById("instructions-btn").addEventListener("click", goCreativeInstructions);
+      showCompletionOverlay();
     }
 
     function bindSkip(nextFn) {
@@ -983,7 +1358,7 @@
         '<article class="card"><h3>Good clarifying questions</h3><ul>' + questions + "</ul></article>",
         '<article class="card"><h3>Example framework</h3>' + buckets + "</article>",
         "</div>",
-        sessionNoteHtml(),
+        sessionNoteHtml("opening"),
         '<div class="actions">',
         '<button class="btn-primary" id="new-btn">Next case</button>',
         '<button class="btn-secondary" id="instructions-btn" type="button">Instructions</button>',
@@ -1027,7 +1402,7 @@
     }
 
     async function loadLocalCases() {
-      const mod = await import("./functions/_data/cases.js");
+      const mod = await import("./functions/_data/cases.js?v=backhalf");
       if (!mod || !Array.isArray(mod.CASES)) {
         throw new Error("No local cases");
       }

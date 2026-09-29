@@ -16,7 +16,51 @@ export const CASES = [
       { name: "Network economics", points: ["Newly viable long-haul routes", "Expansion potential", "Hub vs point-to-point dynamics"] },
       { name: "Competitive dynamics", points: ["Risk of industry-wide price wars", "Erosion of low-cost carrier cost advantage", "Potential consolidation"] },
       { name: "Consumer behavior", points: ["Demand spike from lower fares", "Shift in business vs leisure mix", "Greater sensitivity to amenities once price is less of a lever"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Before the fuel-price collapse, fuel made up 30% of American Airlines' total operating cost per available seat-mile (ASM), and that all-in cost was $0.14 per ASM. After the shock, fuel costs are $0.00 and all other costs are unchanged. Revenue per ASM has held at $0.16. By what percentage has the client's profit margin (profit per ASM) improved?",
+        answer: "210%",
+        steps: [
+          "Old fuel cost = 30% x $0.14 = $0.042 per ASM.",
+          "New cost per ASM = $0.14 - $0.042 = $0.098.",
+          "Old profit = $0.16 - $0.14 = $0.02 per ASM.",
+          "New profit = $0.02 + $0.042 = $0.062 per ASM.",
+          "Margin improvement = ($0.062 - $0.02) / $0.02 = 210%."
+        ],
+        insight: "Fuel's disappearance triples-plus unit profit, but rivals get the same shock, so price cuts alone will not create advantage."
+      }
+    ],
+    creative: {
+      prompt: "American now has much lower fuel costs — but so do all of its competitors. Cutting fares may spark an industry-wide price war. What other strategic levers can American pull to capitalize on this sudden cost advantage?",
+      buckets: [
+        {
+          name: "Convenience",
+          points: [
+            "Add more direct routes",
+            "Increase frequency on high-demand routes",
+            "Use newly viable long-haul flying to fill network gaps"
+          ]
+        },
+        {
+          name: "Product differentiation",
+          points: [
+            "Invest in the onboard experience",
+            "Enhance business-class offerings",
+            "Compete on amenities once price is a weaker lever"
+          ]
+        },
+        {
+          name: "Customer loyalty",
+          points: [
+            "Expand and improve loyalty programs",
+            "Use customer data to target high-value travelers",
+            "Deepen share of wallet rather than racing on fare"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "cruise-co",
@@ -34,7 +78,52 @@ export const CASES = [
       { name: "Financial analysis", points: ["Revenue: tickets, onboard spend, other", "Costs: purchase price and running costs", "Break-even versus the client’s hurdle"] },
       { name: "Market analysis", points: ["Uber-luxury market size and growth", "Other luxury targets vs this asset", "Competitive set"] },
       { name: "Synergies and fit", points: ["Cost synergies in support functions", "Customer and brand fit", "Cultural and leadership risk"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Cruise Co. is valuing Jungle Cruise, which currently earns $30M of net operating profit. Recent transactions: Starwood (national 5-star hotel chain) sold for $620M on $120M NOP in 2021; Bilton (regional motel chain) sold for $120M on $20M NOP in 2022; Valhalla Cruise (EU luxury cruise) sold for $950M on $90M NOP in 2021; Open Seas (Asia cruise) sold for $500M on $45M NOP in 2022. What purchase price is implied for Jungle Cruise if you use the relevant comps?",
+        answer: "~$300M",
+        steps: [
+          "Ignore hotel comps (Starwood ~5x, Bilton 6x); they are a different industry.",
+          "Cruise comps: Valhalla 950/90 ~ 10.6x; Open Seas 500/45 ~ 11.1x; use ~10x NOP.",
+          "Jungle Cruise value ~ 10 x $30M = $300M."
+        ],
+        insight: "A ~10x cruise NOP multiple is the right analog; hotel multiples would understate the price."
+      },
+      {
+        kind: "definite",
+        prompt: "Assume Jungle Cruise is acquired for $300M. Exhibit on incremental economics ($M): Jungle Cruise currently generates $90M of revenue, of which $15M would be lost to cannibalization of Cruise Co.'s existing sailings. Jungle Cruise currently has $60M of costs, of which $5M can be saved via back-office synergies. What incremental annual profit does the deal create, and how many years to break even on a $300M purchase price?",
+        answer: "$20M per year; 15-year break-even",
+        steps: [
+          "Net incremental revenue = 90 - 15 = $75M.",
+          "Net incremental costs = 60 - 5 = $55M.",
+          "Incremental profit = 75 - 55 = $20M per year.",
+          "Break-even = 300 / 20 = 15 years."
+        ],
+        insight: "The deal hits the client's <15-year hurdle only on the nose — there is no margin of safety."
+      }
+    ],
+    creative: {
+      prompt: "What are the potential risks if Cruise Co. acquires Jungle Cruise?",
+      buckets: [
+        {
+          name: "Financial",
+          points: [
+            "15-year break-even is long and sensitive to synergy and cannibalization assumptions",
+            "Premium brand may require continued high opex that mass-market Cruise Co. will be tempted to cut"
+          ]
+        },
+        {
+          name: "Non-financial",
+          points: [
+            "Cultural mismatch; Jungle Cruise leadership may leave",
+            "Mass-market and uber-luxury customers want different products; Cruise Co. may mismanage the segment",
+            "The Jungle Cruise brand could be diluted if it is folded into the parent"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "pricing-games",
@@ -52,7 +141,61 @@ export const CASES = [
       { name: "Profitability by model", points: ["Players acquired × revenue per player", "Fixed infrastructure vs variable acquisition cost", "Margin, not just absolute profit"] },
       { name: "Qualitative fit", points: ["Competitive response", "Retention vs one-time purchase", "Other income such as merchandise or esports"] },
       { name: "Future optionality", points: ["Sequels and expansions", "Mobile/console", "International launch"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "market-sizing",
+        prompt: "NextLevel Gaming is launching a new PC multiplayer RPG in the US only. Estimate the addressable number of players it can target in year 1. A reasonable sample path: US population ~330M; ~30% play video games (~100M); ~40% of those play online/PC multiplayer (~40M); ~25% would try a new RPG in a given year (~10M). State your player-base estimate.",
+        answer: "~10 million players",
+        steps: [
+          "US population ~330M.",
+          "~30% play video games → ~100M gamers.",
+          "~40% of gamers play online/PC multiplayer → ~40M.",
+          "~25% would try a new title in this genre in year 1 → ~10M addressable players.",
+          "If your estimate is far from 10M, pressure-test participation and genre-interest rates."
+        ],
+        insight: "Later profitability math is built on a 10M addressable player base."
+      },
+      {
+        kind: "definite",
+        prompt: "NLG has a 10M addressable US player base. Year-1 economics by model: Subscription — 10% of players pay $10/month. Retail — 12% buy the game at $60 once. Free-to-play — 50% download, and 30% of downloaders spend $100 on in-game items. Costs: Subscription = 10M x 10% x ($50 + $35) + $5M + $10M. Retail = 10M x 12% x ($22 + $18) + $5M + $10M. Free-to-play = 10M x 50% x ($13 + $7) + 10M x 50% x 30% x $10 + $5M + $10M. What is year-1 profit and profit margin under each model?",
+        answer: "Subscription $20M (16.7%); Retail $9M (12.5%); Free-to-play $20M (13.3%)",
+        steps: [
+          "Subscription revenue = 10M x 10% x $10 x 12 = $120M; cost = 10M x 10% x $85 + $15M = $100M; profit = $20M; margin = 20/120 = 16.7%.",
+          "Retail revenue = 10M x 12% x $60 = $72M; cost = 10M x 12% x $40 + $15M = $63M; profit = $9M; margin = 9/72 = 12.5%.",
+          "Free-to-play revenue = 10M x 50% x 30% x $100 = $150M; cost = 10M x 50% x $20 + 10M x 50% x 30% x $10 + $15M = $130M; profit = $20M; margin = 20/150 = 13.3%."
+        ],
+        insight: "Subscription and F2P print the same $20M profit; subscription wins on margin, F2P on player scale."
+      }
+    ],
+    creative: {
+      prompt: "What non-financial factors would you consider when choosing between the subscription and free-to-play models?",
+      buckets: [
+        {
+          name: "Competitive response",
+          points: [
+            "Stickiness if a rival launches in the same genre",
+            "F2P's larger installed base is a moat; subscription's smaller base is easier to poach"
+          ]
+        },
+        {
+          name: "Growth optionality",
+          points: [
+            "New platforms (mobile/console)",
+            "International expansion",
+            "A sequel or second title once the community exists"
+          ]
+        },
+        {
+          name: "Other revenue and demand risk",
+          points: [
+            "Merchandise and esports once the player base is large",
+            "Shift of players off PC toward mobile",
+            "Genre fatigue in the next generation of players"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "stance-distance",
@@ -70,7 +213,46 @@ export const CASES = [
       { name: "Funding sources", points: ["Tuition and enrollment", "Fundraising and gifts", "Internal cost savings", "Why endowment may be off-limits"] },
       { name: "Cost structure", points: ["Staffing and salaries vs peers", "Facilities and overhead", "One-time vs ongoing program cost"] },
       { name: "Implementation risk", points: ["Teacher and family adoption", "Equity for scholarship students", "Whether $1M savings can fund the run-rate"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "The Stance School has 1,000 students and a $1M funding goal. It will cut five roles down to peer-school student-to-staff benchmarks. Current headcount and salary: administrative assistant 3 at $45,000 (benchmark 500 students per role); custodian 17 at $40,000 (100:1); guidance counselor 15 at $65,000 (100:1); IT technician 6 at $60,000 (200:1); librarian 8 at $50,000 (250:1). What annual salary savings result, and how far short of $1M is the school?",
+        answer: "$910K savings; $90K short of $1M",
+        steps: [
+          "Admin: need 1000/500 = 2 vs 3 → cut 1 x $45K = $45K.",
+          "Custodian: need 1000/100 = 10 vs 17 → cut 7 x $40K = $280K.",
+          "Counselor: need 10 vs 15 → cut 5 x $65K = $325K.",
+          "IT: need 1000/200 = 5 vs 6 → cut 1 x $60K = $60K.",
+          "Librarian: need 1000/250 = 4 vs 8 → cut 4 x $50K = $200K.",
+          "Total savings = 45 + 280 + 325 + 60 + 200 = $910K, $90K short of $1M."
+        ],
+        insight: "Role cuts get most of the way there but do not fully fund the $1M remote-learning build."
+      }
+    ],
+    creative: {
+      prompt: "Matching peer staffing still leaves a $90K gap versus the $1M goal, and cutting roles has risks. What risks come with the layoffs, and how else could Stance close the funding gap?",
+      buckets: [
+        {
+          name: "Risks of cutting roles",
+          points: [
+            "Severance, pension, and union-negotiation costs",
+            "Negative PR and possible enrollment decline",
+            "Student mental-health and service-quality impact",
+            "Timing: savings may not land inside this year's budget"
+          ]
+        },
+        {
+          name: "Ways to close the $90K gap",
+          points: [
+            "License the e-learning or teacher-PD platform to other schools",
+            "Paid remote tutoring or extra classes on the platform",
+            "Alumni / parent / HNW gifts (named rooms or awards)",
+            "Lobby for additional state appropriations"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "drinks-gone-flat",
@@ -88,7 +270,66 @@ export const CASES = [
       { name: "Revenue levers", points: ["Price vs volume by beverage category", "Mix shift across soda, water, other", "Brand-level price and pack architecture"] },
       { name: "Category and shopper", points: ["Promotion and traffic", "Private label vs national brands", "Health and occasion trends"] },
       { name: "4Ps response", points: ["Pricing and pack sizes", "Placement and assortment", "Promotion and new products"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "A regional grocer's beverage department reports average gallons (MM) and price per gallon by category: Sodas 100 gal at $0.90 in 2014 vs 120 gal at $0.70 in 2015; Waters 20 gal at $0.70 vs 22 gal at $0.65; Others 11 gal at $4.00 vs 10 gal at $4.50. What was beverage revenue in each year, and where did the decline come from?",
+        answer: "2014 $148M vs 2015 $143.3M; soda price collapse more than offset volume",
+        steps: [
+          "2014: soda 100 x 0.90 = $90M; water 20 x 0.70 = $14M; other 11 x 4.00 = $44M; total $148M.",
+          "2015: soda 120 x 0.70 = $84M; water 22 x 0.65 = $14.3M; other 10 x 4.50 = $45M; total $143.3M.",
+          "Net decline = $4.7M, driven by soda (down $6M) despite higher soda gallons."
+        ],
+        insight: "This is a price/mix problem in soda, not a category-volume problem."
+      },
+      {
+        kind: "definite",
+        prompt: "Soda gallons (MM) and revenue ($M), average per store: Brand A 50 gal / $50M in 2014 vs 30 gal / $30M in 2015; Brand B 25 / $25 vs 30 / $30; Value brand 25 / $15 vs 60 / $24. What happened to price and mix, and which brand caused the soda-revenue decline?",
+        answer: "Value brand doubled volume but cut price from $0.60 to $0.40/gal; Brand A lost 20 gal at $1.00",
+        steps: [
+          "Implied 2014 prices: A $1.00, B $1.00, value $0.60 per gallon.",
+          "Implied 2015 prices: A $1.00, B $1.00, value $0.40 per gallon.",
+          "Brand A revenue -20; Brand B +5; value +9; net soda -6, matching the category gap.",
+          "Value brand stole volume from Brand A while destroying price."
+        ],
+        insight: "Fix value-brand price architecture and differentiation versus A and B; do not just 'promote soda.'"
+      }
+    ],
+    creative: {
+      prompt: "The value brand is causing the beverage-revenue decline. How would you reverse it? Organize around the 4Ps.",
+      buckets: [
+        {
+          name: "Price",
+          points: [
+            "Raise value-brand price off $0.40/gal",
+            "Pack-size architecture so value does not undercut Brand A",
+            "Avoid alienating remaining value shoppers with a one-step jump"
+          ]
+        },
+        {
+          name: "Promotion",
+          points: [
+            "Stop promotions that train shoppers to trade down",
+            "Differentiate value vs A/B in marketing rather than on price alone"
+          ]
+        },
+        {
+          name: "Product",
+          points: [
+            "Reformulate or re-brand value so it is not a copy of A",
+            "Bundles that lift A/B with value rather than substituting"
+          ]
+        },
+        {
+          name: "Placement",
+          points: [
+            "Change shelf adjacencies so value is not the default grab next to A",
+            "Review planogram share versus actual margin"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "apple-of-my-eye",
@@ -106,7 +347,62 @@ export const CASES = [
       { name: "Alternatives", points: ["Other drinks: cider, wine, cocktails", "Experiences: music, themed nights", "Food"] },
       { name: "Operations and cost", points: ["Equipment and renovations", "Licensing", "Break-even volume"] },
       { name: "Market", points: ["Local demand and gluten-free trend", "Competitors", "Customer preferences"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Bob currently bottles 30 cases of beer per day and no cider. After renovations he would produce 24 cases of beer and 12 cases of cider per day. He sells only by the bottle: $5.00/beer bottle and $6.00/cider bottle; 30 bottles per case. Production runs Monday-Friday, 20 days per month. What is the change in his annual revenue if he adds cider?",
+        answer: "+$302,400 per year",
+        steps: [
+          "Current beer revenue = 30 cases x 30 bottles x $5 x 20 days x 12 months = $1,080,000.",
+          "Future beer = 24 x 30 x $5 x 20 x 12 = $864,000.",
+          "Cider = 12 x 30 x $6 x 20 x 12 = $518,400.",
+          "New total = $1,382,400; increase = $302,400."
+        ],
+        insight: "Cider more than replaces the lost beer volume because of higher price and extra cases."
+      },
+      {
+        kind: "definite",
+        prompt: "Bob needs at least 0.5% of the NYC take-home cider market to break even. NYC is expected to sell 15.5 million bottles of cider next year. After renovations he produces 12 cases/day x 30 bottles/case x 20 days/month x 12 months. Can he produce enough cider to hit 0.5%?",
+        answer: "Yes — 86,400 bottles vs 77,500 needed",
+        steps: [
+          "0.5% of 15.5M = 77,500 bottles.",
+          "Capacity = 12 x 30 x 20 x 12 = 86,400 bottles.",
+          "86,400 > 77,500, so capacity is sufficient.",
+          "Demand for Bob's cider is still unproven — capacity is not the same as sales."
+        ],
+        insight: "He can physically make the break-even volume; the open question is whether he can sell it."
+      }
+    ],
+    creative: {
+      prompt: "Besides potential revenue, what else should Bob consider before expanding into cider?",
+      buckets: [
+        {
+          name: "Cost and operations",
+          points: [
+            "Labor training, equipment, labeling, marketing",
+            "Raw materials (apples)",
+            "Licensing and whether to brew in-house vs buy and resell"
+          ]
+        },
+        {
+          name: "Market",
+          points: [
+            "Cider vs beer demand and growth",
+            "New customers vs cannibalizing beer regulars",
+            "Competitors in NYC cider"
+          ]
+        },
+        {
+          name: "Brand and channels",
+          points: [
+            "Impact on beer brand equity",
+            "New distribution (grocery, liquor stores)",
+            "Go-to-market for a gluten-free occasion"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "grad-u-date",
@@ -124,7 +420,60 @@ export const CASES = [
       { name: "Market", points: ["Addressable graduate-student users", "Competitive set, including free apps", "Niche vs general dating"] },
       { name: "Monetization models", points: ["Subscription", "Freemium / à la carte", "Ads or university partnerships"] },
       { name: "Profitability", points: ["Fixed costs vs cost per member", "Conversion and willingness to pay", "Retention"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "market-sizing",
+        prompt: "Size Grad-U-Date's US graduate-student user pool using this campus mix (average university): medical 450 students x 4 years = 1,800; MBA 300 x 2 years = 600; law 200 x 3 years = 600; other graduate 1,000 x 3 years = 3,000. There are 1,000 such universities. What is the addressable student market?",
+        answer: "6 million graduate students",
+        steps: [
+          "Students per university = 1,800 + 600 + 600 + 3,000 = 6,000.",
+          "Market = 6,000 x 1,000 universities = 6,000,000."
+        ],
+        insight: "Limiting the app to MBA students would shrink this pool dramatically and skew gender."
+      },
+      {
+        kind: "definite",
+        prompt: "Addressable market is 6,000,000 students. Fixed costs are $10,000,000/year and variable cost is $1 per member per year. Three models: (1) Monthly fee — 5% of students pay $10/month. (2) Premium account — 30% become users; of users, half are professional students (40% buy premium) and half are non-professional (20% buy premium); premium is $5/month. (3) Advertising — 40% become users; half see $0.75/month ad revenue and half $1.25/month. Which model is most profitable, and by how much?",
+        answer: "Monthly fee $25.7M; premium $20.6M; ads $16.4M — monthly fee wins on current math",
+        steps: [
+          "Monthly fee: 6M x 5% = 300k users; revenue 300k x $10 x 12 = $36M; profit 36M - 10M - 300k x $1 = $25.7M.",
+          "Premium: 6M x 30% = 1.8M users; paying share = 50%x40% + 50%x20% = 30%; revenue 1.8M x 30% x $5 x 12 = $32.4M; profit 32.4M - 10M - 1.8M = $20.6M.",
+          "Ads: 6M x 40% = 2.4M users; ARPU = 50%x$0.75 + 50%x$1.25 = $1.00/month; revenue 2.4M x $1 x 12 = $28.8M; profit 28.8M - 10M - 2.4M = $16.4M."
+        ],
+        insight: "Monthly-fee profit is highest today, but industry mix has been shifting away from paid monthly dating fees since ~2013 (Tinder)."
+      }
+    ],
+    creative: {
+      prompt: "If you recommend a premium-account model, what other strategies can Grad-U-Date use to increase profit? Also: why might an MBA-only dating site be a bad idea?",
+      buckets: [
+        {
+          name: "Increase revenue",
+          points: [
+            "Mobile app to grow the funnel",
+            "Profile consulting and photo editing",
+            "Deals with date venues",
+            "Expand to recent alumni",
+            "Micro-transactions"
+          ]
+        },
+        {
+          name: "Reduce cost",
+          points: [
+            "Outsource servers",
+            "Email-only support instead of phone"
+          ]
+        },
+        {
+          name: "Why not MBA-only",
+          points: [
+            "More men than women in most MBA programs",
+            "Unnecessarily small market",
+            "Older students are more often already partnered"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "tres-burritos",
@@ -142,7 +491,51 @@ export const CASES = [
       { name: "Response options", points: ["Stay open, close, or modify", "Delivery, curbside, hours, partial closures", "Close only some stores"] },
       { name: "Profitability", points: ["Lost sales vs variable cost save", "Fixed rent and labor", "Duration of disruption"] },
       { name: "Brand and external", points: ["Public health perception", "Competitor moves", "Spillover from NYC to the national brand"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Each NYC Tres Burritos currently does $100,000 monthly revenue and $30,000 EBITDA. Line items: COGS $10,000; wages $35,000; SG&A $5,000; fixed overhead $20,000. The governor requires delivery-only. For the 3-month virus: revenue drops 10%; COGS rises 10%; launching delivery costs a one-time $20,000 in month 1; wages, SG&A, and overhead stay $60,000. What is EBITDA in month 1, months 2-3, and over 3 months vs the old $90,000?",
+        answer: "Month 1 -$1K; months 2-3 +$19K each; 3-month EBITDA $37K (~60% below $90K)",
+        steps: [
+          "New monthly revenue = $100K x 0.9 = $90K; new COGS = $10K x 1.1 = $11K.",
+          "Month 1 expenses = 60 + 11 + 20 = $91K; EBITDA = 90 - 91 = -$1K.",
+          "Months 2-3 expenses = 60 + 11 = $71K; EBITDA = $19K each.",
+          "3-month total = -1 + 19 + 19 = $37K vs old 3 x 30 = $90K, about a 60% decline.",
+          "Still far better than closing (fixed costs with zero sales)."
+        ],
+        insight: "Delivery keeps the stores EBITDA-positive over the outbreak despite a loss-making setup month."
+      }
+    ],
+    creative: {
+      prompt: "If NYC stores stay open with delivery, how could Tres Burritos improve EBITDA during the outbreak?",
+      buckets: [
+        {
+          name: "Increase revenue",
+          points: [
+            "Sell kitchen ingredients as groceries",
+            "Partner with other local restaurants to drive traffic",
+            "Raise prices",
+            "List on Seamless/Uber Eats to add orders"
+          ]
+        },
+        {
+          name: "Decrease cost",
+          points: [
+            "Reduce staff and/or close some of the 10 NYC stores",
+            "Limit the menu",
+            "Launch delivery via a third party instead of spending $20K to build it"
+          ]
+        },
+        {
+          name: "Brand / community",
+          points: [
+            "Ingredient boxes for families who cannot shop",
+            "Coordinate with what the chain does in other cities"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "mece-essentials",
@@ -160,7 +553,63 @@ export const CASES = [
       { name: "Market and share", points: ["Category size and CAGR by line", "Share today vs 2020", "Whether 4× is in-market or requires new segments"] },
       { name: "Revenue and margin", points: ["Price × volume by SKU", "Unprofitable lines to cut", "Cost to grow share"] },
       { name: "External", points: ["Channel power", "Competitors", "Capacity and supply"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "MECE had $60M revenue in 2016: socks 40%, tanks 25%, tees 15%, underwear 20%. 2016 market shares and 4-year CAGRs: socks 15% share, +5% CAGR; tanks 2.5%, +6%; tees 5%, -3%; underwear 1%, +20%. Gross margins stay at 2016 levels: socks 15%, tanks -5%, tees 0%, underwear 10%. By 2020 the firm expects shares of 15%, 10%, 5%, and 10% respectively. What is 2020 revenue and gross margin vs the CEO's $240M and 10.5% promises? You may round 2020 category markets to $200M, $750M, $150M, and $2.5B.",
+        answer: "$362.5M revenue at 7.1% gross margin — revenue target yes, margin target no",
+        steps: [
+          "2016 revenue: socks $24M, tanks $15M, tees $9M, underwear $12M.",
+          "2016 markets: 24/0.15 = $160M socks; 15/0.025 = $600M tanks; 9/0.05 = $180M tees; 12/0.01 = $1.2B underwear (use $1.26B if unrounded).",
+          "2020 markets (rounded): $200M, $750M, $150M, $2.5B.",
+          "2020 revenue = 200x15% + 750x10% + 150x5% + 2500x10% = 30 + 75 + 7.5 + 250 = $362.5M > $240M.",
+          "2020 gross profit = 30x15% + 75x(-5%) + 7.5x0% + 250x10% = 4.5 - 3.75 + 0 + 25 = $25.75M; margin 25.75/362.5 = 7.1% < 10.5%."
+        ],
+        insight: "4x revenue is easy if underwear share really goes to 10%; the margin promise fails because tanks and tees drag."
+      },
+      {
+        kind: "definite",
+        prompt: "Using 2020 revenue socks $30M, tanks $75M, tees $7.5M, underwear $250M and margins 15%, -5%, 0%, 10%, can the firm hit both $240M revenue and 10.5% gross margin by dropping product lines?",
+        answer: "Drop tanks and tees: $280M revenue, 10.54% margin",
+        steps: [
+          "Drop tanks only: revenue 362.5 - 75 = $287.5M; GP 25.75 + 3.75 = $29.5M; margin 29.5/287.5 = 10.26% (still shy of 10.5%).",
+          "Also drop tees: revenue 287.5 - 7.5 = $280M; GP stays $29.5M; margin 29.5/280 = 10.54%.",
+          "Both still above the $240M revenue floor."
+        ],
+        insight: "Cutting the two zero/negative-margin lines is the clean way to hit both promises."
+      }
+    ],
+    creative: {
+      prompt: "Underwear share must rise from 1% to 10% while socks stay at 15%. How can the firm attempt that?",
+      buckets: [
+        {
+          name: "Product",
+          points: [
+            "Luxury / nicer-material line",
+            "Women's underwear",
+            "Mix: boxers, briefs, athletic"
+          ]
+        },
+        {
+          name: "Customers and channels",
+          points: [
+            "Steal share from Hanes",
+            "B2B branding for other companies",
+            "Grocery, pharmacy, airport, vending",
+            "E-commerce add-on at apparel checkout"
+          ]
+        },
+        {
+          name: "Operations",
+          points: [
+            "Re-tool lines from tanks/tees to underwear",
+            "Renegotiate or offshore fabric",
+            "Outsource manufacturing"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "adventure-capital",
@@ -178,7 +627,72 @@ export const CASES = [
       { name: "Costs", points: ["One-time: travel, permits, equipment, map", "Recurring: wages, housing", "Opportunity cost of his time"] },
       { name: "Value of the artifact", points: ["Sale price vs who the buyer is", "Probability-weighted payoff", "Market for antiquities"] },
       { name: "Risks and alternatives", points: ["Failure, competition, danger", "Other artifacts or safer digs", "Non-dig options such as media rights"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Idaho Johnson is costing a 1-year (12-month) dig. Six people travel (Idaho plus 5 workers). Costs: map/equipment $12,000 total; legal $10,000 total; travel $1,500 per person each way; labor $4,000/month for each of 5 employees; food/lodging $10,000/month for the whole group; missed teaching salary $100,000. What is the total cost of the expedition?",
+        answer: "$500K",
+        steps: [
+          "One-time: $12K + $10K + (6 x $1,500 x 2) = $40K.",
+          "Recurring: ($4K x 5 x 12) + ($10K x 12) = $240K + $120K = $360K.",
+          "Opportunity cost = $100K.",
+          "Total = $40K + $360K + $100K = $500K."
+        ],
+        insight: "Most of the $500K is recurring labor and camp cost, not the map."
+      },
+      {
+        kind: "definite",
+        prompt: "A private collector offers $4M cash for the crown. A museum will pay 10% of exhibit ticket revenue in perpetuity. A comparable museum draws 900,000 visitors/year; 50% buy the exhibit ticket at $10; discount rate 15%; growth 5%. Which offer is better, and what is the museum offer worth?",
+        answer: "Museum is better: $4.5M PV vs $4M cash",
+        steps: [
+          "Exhibit ticket revenue = 900k x 50% x $10 = $4.5M/year.",
+          "Idaho's take = 10% x $4.5M = $450K/year.",
+          "Growing perpetuity PV = 450K / (15% - 5%) = $4.5M.",
+          "$4.5M > $4M, so take the museum."
+        ],
+        insight: "The museum wins on PV, but only if attendance and the 5% growth hold."
+      },
+      {
+        kind: "definite",
+        prompt: "Success probability is 20% (failure 80%). Use the $4.5M museum payoff if he finds the crown and $0 revenue if he fails. Expedition cost is $500K (including $100K opportunity cost). He requires 85% ROI. What is expected ROI, and does the dig clear the hurdle?",
+        answer: "80% expected ROI — just short of 85%",
+        steps: [
+          "Expected revenue = 20% x $4.5M + 80% x $0 = $900K.",
+          "Expected profit = 900K - 500K = $400K.",
+          "ROI = 400 / 500 = 80% < 85% required."
+        ],
+        insight: "Close to the hurdle; extra artifacts, media rights, or a slightly higher success rate would flip it."
+      }
+    ],
+    creative: {
+      prompt: "What costs would be required to embark on this expedition? Bucket them.",
+      buckets: [
+        {
+          name: "Upfront",
+          points: [
+            "Map",
+            "Travel",
+            "Legal (permits, visas, vaccines)",
+            "Equipment"
+          ]
+        },
+        {
+          name: "Recurring",
+          points: [
+            "Labor",
+            "Lodging and food"
+          ]
+        },
+        {
+          name: "Opportunity costs",
+          points: [
+            "Teaching salary",
+            "Other potential expeditions"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "all-night-long",
@@ -196,7 +710,62 @@ export const CASES = [
       { name: "Revenue", points: ["Ticket sales across extra showtimes", "Concessions", "Premium pricing potential"] },
       { name: "Costs", points: ["Staff, security, cleaning", "Utilities and projector maintenance", "COGS"] },
       { name: "Risks and alternatives", points: ["24-hour equipment strain", "Competitor copycats", "Opportunity cost of other programming"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "CNB will test 24-hour opening-weekend screenings in one 300-seat theater, Thursday-Sunday night (3 extra nights). Tickets are $15 adults and $10 children/seniors. Expected fill and mix: 12:00 AM — 100% fill, 30% children / 60% adults / 10% seniors; 3:00 AM — 60% fill, 10% / 40% / 10%; 6:00 AM — 80% fill, 20% / 40% / 20%. Concession spend is $10 per person in the seat. What is total ticket-plus-concession revenue for the 3-night test?",
+        answer: "$49,500",
+        steps: [
+          "12:00 AM ticket revenue = 300 x (0.30x$10 + 0.60x$15 + 0.10x$10) = 300 x $13 = $3,900.",
+          "3:00 AM = 300 x (0.10x$10 + 0.40x$15 + 0.10x$10) = 300 x $8 = $2,400.",
+          "6:00 AM = 300 x (0.20x$10 + 0.40x$15 + 0.20x$10) = 300 x $10 = $3,000.",
+          "Ticket total per night = $9,300.",
+          "Concession heads = 300x100% + 300x60% + 300x80% = 720; x $10 = $7,200.",
+          "($9,300 + $7,200) x 3 nights = $49,500."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Current daily cost per theater: staff $2,600; concessions $2,000; concession maintenance $400; projector maintenance $5,000. For 24-hour weekends, staff +50%, concession COGS +50%, concession maintenance +25%, projector +10%. Using $49,500 of 3-night revenue, what is incremental weekend profit?",
+        answer: "$10,800 (about 22% margin on the $49,500)",
+        steps: [
+          "New daily costs: staff 2,600x1.5 = 3,900; concessions 2,000x1.5 = 3,000; concession maint. 400x1.25 = 500; projector 5,000x1.10 = 5,500; total $12,900/day.",
+          "3-day cost = 12,900 x 3 = $38,700.",
+          "Profit = 49,500 - 38,700 = $10,800."
+        ],
+        insight: "The test theater is profitable; national rollout still depends on demand and cost varying by market."
+      }
+    ],
+    creative: {
+      prompt: "What additional factors should CNB consider before rolling out 24-hour opening-weekend screenings?",
+      buckets: [
+        {
+          name: "Demand and product",
+          points: [
+            "Cannibalization of existing showtimes",
+            "Which titles actually warrant 24-hour (tentpoles vs flops)",
+            "Regional demographic differences"
+          ]
+        },
+        {
+          name: "Cost and operations",
+          points: [
+            "Upfront marketing cost",
+            "Whether projectors can run 24 hours without extra capex",
+            "Staffing/security overnight"
+          ]
+        },
+        {
+          name: "Competitive and rollout",
+          points: [
+            "Copycat risk if CNB proves the model",
+            "Test one theater vs a subset of the 400",
+            "Opportunity cost of other programming"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "steel-co",
@@ -214,7 +783,60 @@ export const CASES = [
       { name: "Transport modes", points: ["Cost per ton, utilization, frequency", "Shift volume to cheaper, fuller modes", "Why trucks are overused"] },
       { name: "Operations", points: ["Inventory scheduling and the analytics tool", "Empty capacity", "Contract and customer constraints"] },
       { name: "Other near-term savings", points: ["Procurement", "Energy", "Network redesign"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Steel Co. ships coils by four modes. Per week: rail 10 deliveries x 40,000 tons at 67% utilization, $25/ton; truck 20 x 20,000 tons at 75%, $30/ton; barge 4 x 50,000 tons at 80%, $25/ton; vessel 3 x 100,000 tons at 100%, $10/ton. Utilization is the share of vehicle capacity actually loaded (the rest is empty). What is weekly transport cost, and how much could be saved by filling empty capacity?",
+        answer: "$30M weekly cost; $7.3M weekly savings potential",
+        steps: [
+          "Volume/week: rail 400k, truck 400k, barge 200k, vessel 300k tons.",
+          "Cost/week: 400k x $25 = $10.0M; 400k x $30 = $12.0M; 200k x $25 = $5.0M; 300k x $10 = $3.0M; total $30.0M.",
+          "Empty-capacity savings = cost x (1 - utilization): rail 10.0 x 33% = $3.3M; truck 12.0 x 25% = $3.0M; barge 5.0 x 20% = $1.0M; vessel $0.",
+          "Total savings potential = $7.3M/week."
+        ],
+        insight: "Trucks are both expensive and under-full; vessels are cheap and already full."
+      },
+      {
+        kind: "definite",
+        prompt: "Vessels load every 14 days (100% utilization KPI) while trucks leave daily at $30/ton vs vessels at $10/ton. Over a period, 5,700 coils must move from the pier (1 coil = 10 tons). Weeks 1-2 leave 3,000 coils that miss the vessel and go by truck; better inventory planning would put the remaining 2,700 on vessels. What cost is saved by avoiding those truck diversions?",
+        answer: "$540,000",
+        steps: [
+          "Coils that can shift = 5,700 - 3,000 = 2,700.",
+          "Tons = 2,700 x 10 = 27,000.",
+          "Savings = 27,000 x ($30 - $10) = $540,000."
+        ],
+        insight: "A 100% vessel-fill KPI is stranding coils on the pier; a 95% rule would reduce truck overflow."
+      }
+    ],
+    creative: {
+      prompt: "Besides filling empty rail/truck/barge capacity and fixing vessel-to-truck overflow, what other near-term techniques could save cost?",
+      buckets: [
+        {
+          name: "Mode and contracts",
+          points: [
+            "Renegotiate $/ton, especially truck",
+            "Shift volume from truck to vessel/barge where lead time allows",
+            "Change vessel KPIs off 100% fill"
+          ]
+        },
+        {
+          name: "Inventory and analytics",
+          points: [
+            "Finish the scheduling analytics tool",
+            "Hold coils to the vessel window instead of daily truck"
+          ]
+        },
+        {
+          name: "Other opex",
+          points: [
+            "Energy and plant utilization",
+            "Procurement of inputs",
+            "Network redesign of piers vs customer locations"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "ggc-health",
@@ -232,7 +854,60 @@ export const CASES = [
       { name: "Existing ASCs", points: ["Patients per doctor", "Doctors per site", "Mix toward higher-reimbursement procedures"] },
       { name: "New ASCs", points: ["Market and demographics", "Partnerships with physician groups", "Competing ASCs and hospitals"] },
       { name: "External", points: ["Payer reimbursement rules", "Technology expectations", "Regulation"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "GGC can open only one new ASC. Cities and doctor counts: Charlotte 30, Indianapolis 25, Nashville 16. Specialty mix: Charlotte 80% ortho / 10% neuro / 10% gastro; Indianapolis 40/40/20; Nashville 50/25/25. Each ortho doctor brings 15 patients/month at $5,000; neuro 10/month at $25,000; gastro 12/month at $15,000. Which city, and how much annual revenue? Does it hit the $60M (15%) growth target alone?",
+        answer: "Indianapolis $49.8M — best city, but $10.2M short of $60M",
+        steps: [
+          "Revenue per doctor-year: ortho 15x12x$5K = $900K; neuro 10x12x$25K = $3.0M; gastro 12x12x$15K = $2.16M.",
+          "Charlotte: 24x900K + 3x3M + 3x2.16M = 21.6 + 9 + 6.48 = $37.08M.",
+          "Indianapolis: 10x900K + 10x3M + 5x2.16M = 9 + 30 + 10.8 = $49.8M.",
+          "Nashville: 8x900K + 4x3M + 4x2.16M = 7.2 + 12 + 8.64 = $27.84M (dominated on every specialty by Indy).",
+          "Need same-site growth for the remaining ~$10M."
+        ],
+        insight: "Neuro mix makes Indianapolis win despite fewer doctors; one new site is not enough."
+      },
+      {
+        kind: "definite",
+        prompt: "GGC will add 2 urology doctors to each of its 8 existing ASCs. Each urologist brings 8 patients per month; reimbursement is $8,000 per case. Round 16 x 8 x 12 patients to 1,500. What additional annual revenue is this, and do Indianapolis plus urology clear $60M?",
+        answer: "$12M; yes — $49.8M + $12M = $61.8M",
+        steps: [
+          "Urologists = 8 x 2 = 16.",
+          "Patients/year = 16 x 8 x 12 = 1,536 ~ 1,500.",
+          "Revenue = 1,500 x $8,000 = $12M.",
+          "49.8 + 12 = $61.8M > $60M."
+        ]
+      }
+    ],
+    creative: {
+      prompt: "Indianapolis alone misses the $60M target. How else could GGC grow revenue at the current 8 ASCs? Price increases are not allowed.",
+      buckets: [
+        {
+          name: "More patients per doctor",
+          points: [
+            "Make the ASC the preferred site (scheduling, control, outcomes)",
+            "Incentives for hitting volume targets",
+            "Prioritize high-volume doctors"
+          ]
+        },
+        {
+          name: "More doctors per site",
+          points: [
+            "Physician outreach / recruiting",
+            "Add new high-reimbursement procedures (e.g. urology)"
+          ]
+        },
+        {
+          name: "Mix",
+          points: [
+            "Shift toward higher-reimbursement surgeries",
+            "Payer mix (more commercially insured vs Medicaid)"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "nook-co",
@@ -250,7 +925,70 @@ export const CASES = [
       { name: "Market", points: ["Island-development market size and growth", "Competitors and share", "Demand trends"] },
       { name: "Company", points: ["Services, customers, capabilities", "Pipeline of islands", "Operations risk"] },
       { name: "Deal math and other", points: ["Valuation vs $1.5B and 15% ROI", "Portfolio synergies", "Regulatory and legal risk"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "market-sizing",
+        prompt: "Size the annual revenue market for premium private-island vacations. Sample method: world population 8 billion; top 0.01% are potential customers; 10% likelihood to visit; they visit once every 2 years; 2 guests per room; average stay 5 nights; $10,000 per night all-in. What annual market revenue does that imply?",
+        answer: "$1B per year",
+        steps: [
+          "Potential customers = 8B x 0.01% = 800,000.",
+          "Likely visitors = 800,000 x 10% = 80,000 people.",
+          "Annual visiting people = 80,000 / 2 = 40,000 (once every 2 years).",
+          "Rooms/year = 40,000 / 2 guests = 20,000 stays.",
+          "Revenue = 20,000 x 5 nights x $10,000 = $1.0B."
+        ],
+        insight: "A tiny slice of global wealth still supports a ~$1B category at these rates."
+      },
+      {
+        kind: "definite",
+        prompt: "Nook Co. has 28% of a $1B market. Price is $10,000/night with a 5-night average stay. Staff: 1,000 service at $2,000/month and 500 kitchen at $3,000/month. Food & supplies $5,000 per stay; transport & activities $10,000 per stay. Fixed: maintenance/utilities $25M, insurance $15M, marketing $30M (use the cost sheet: maintenance/insurance/utilities $25M, marketing $15M, administrative $30M if you split SG&A that way — total fixed $70M). Compute 2019 profit and margin using: labor 24M + 18M, food 28M, transport 56M, plus $25M + $15M + $30M fixed.",
+        answer: "$84M profit; 30% margin",
+        steps: [
+          "Revenue = 28% x $1B = $280M.",
+          "Stays = 280M / ($10,000 x 5) = 5,600.",
+          "Labor = 2K x 12 x 1,000 + 3K x 12 x 500 = $24M + $18M = $42M.",
+          "Food = 5K x 5,600 = $28M; transport = 10K x 5,600 = $56M.",
+          "Fixed = 25 + 15 + 30 = $70M. Total cost = 42 + 28 + 56 + 70 = $196M.",
+          "Profit = 280 - 196 = $84M; margin = 30%."
+        ],
+        insight: "Nook is growing share by spending on admin/marketing; PE could cut that."
+      },
+      {
+        kind: "definite",
+        prompt: "Nook earns $84M profit. FunVentures will hold forever; discount rate 5%; asking price $1.5B; target ROI 15%. Using a no-growth perpetuity, what is NPV and ROI vs the $1.5B price? ROI = (NPV - price) / price.",
+        answer: "NPV $1.68B; ROI 12% — short of 15%",
+        steps: [
+          "NPV = 84M / 0.05 = $1.68B.",
+          "ROI = (1.68B - 1.5B) / 1.5B = 12%.",
+          "Cutting ~$5M of administrative cost would lift profit enough to clear 15%."
+        ],
+        insight: "The deal is close; value creation is in cost takeout, not the sticker NPV."
+      }
+    ],
+    creative: {
+      prompt: "What potential risks would you consider in acquiring Nook Co.?",
+      buckets: [
+        {
+          name: "Internal to Nook",
+          points: [
+            "Unsustainably high growth",
+            "Churn if prices are raised to peer levels",
+            "Generic service with no moat",
+            "Quality of reported financials"
+          ]
+        },
+        {
+          name: "External",
+          points: [
+            "Sea-level rise submerging islands",
+            "Conflicts with other travel assets in the PE portfolio",
+            "Shift in vacation destination preferences",
+            "Safety and regulatory risk"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "teleconferencing",
@@ -268,7 +1006,63 @@ export const CASES = [
       { name: "Cost comparison", points: ["Travel cost vs install and operate the system", "Opportunity cost of the capital", "Pilot results from NYC"] },
       { name: "Alternatives", points: ["Outside vendor", "Hybrid model", "Change reimbursement or relocate advisors"] },
       { name: "Qualitative", points: ["Client experience and close rates", "Compliance and recording", "Advisor headcount"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Advisor travel: New York 10 advisors, 2 trips/week, 10 weeks/year, $600 round-trip + $50 M&E; Houston 5 advisors, 2 trips/week, 25 weeks, $500 + $40; San Francisco 10 advisors, 3 trips/week, 20 weeks, $700 + $50; Chicago 10 advisors, 3 trips/week, 30 weeks, $600 + $30. What is total annual travel cost, and roughly cost per advisor?",
+        answer: "$48.2M total; about $1.4M per advisor",
+        steps: [
+          "NY: 10 x 2 x 10 x ($600+$50) = $6.0M.",
+          "Houston: 5 x 2 x 25 x ($500+$40) = $5.0M.",
+          "SF: 10 x 3 x 20 x ($700+$50) = $21.0M.",
+          "Chicago: 10 x 3 x 30 x ($600+$30) = $16.2M.",
+          "Total $48.2M across 35 advisors ~ $1.4M each, concentrated in SF and Chicago."
+        ],
+        insight: "Frequency (SF/Chicago), not ticket price, drives the spend."
+      },
+      {
+        kind: "definite",
+        prompt: "Teleconferencing cuts travel 10% ($4.82M/year). Two options, 35 advisors. Outside vendor: $11M implementation, $2,000/user/month subscription. In-house: $500K development + $8.5M implementation, $1,500/user/month maintenance + $500/user/month inter-company subscription. Run-rate = monthly cost x 35 x 12. Break-even years = implementation cost / annual travel savings (ignore run-rate for this payback). What is annual run-rate for each, and approximate payback?",
+        answer: "Both run $840K/year; vendor ~2.3 years on $11M; in-house ~1.9 years on $9.0M (guide ~2.8 / ~2.1 if using $3.98M savings)",
+        steps: [
+          "Monthly cost/user is $2,000 either way (vendor $2,000; in-house $1,500+$500).",
+          "Run-rate = 2,000 x 35 x 12 = $840K.",
+          "Vendor payback = 11M / 4.82M ~ 2.3 years.",
+          "In-house payback = 9.0M / 4.82M ~ 1.9 years.",
+          "Paybacks are close; choose on qualitative grounds."
+        ],
+        insight: "Financials do not pick a winner — vendor vs in-house is a control/capability choice."
+      }
+    ],
+    creative: {
+      prompt: "Payback is similar for vendor and in-house. What else should the wealth-management firm consider before rolling out virtual conferencing?",
+      buckets: [
+        {
+          name: "Client and advisor",
+          points: [
+            "Impact on close rates and relationships",
+            "Training burden",
+            "Whether some segments still need in-person"
+          ]
+        },
+        {
+          name: "Risk and compliance",
+          points: [
+            "Cybersecurity",
+            "Recording and suitability rules",
+            "Confidentiality of wealth data"
+          ]
+        },
+        {
+          name: "Build vs buy",
+          points: [
+            "Vendor: less internal labor, less control, higher subscription",
+            "In-house: customization and control, more people to maintain across offices"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "apartment-co",
@@ -286,7 +1080,60 @@ export const CASES = [
       { name: "Revenue", points: ["Occupancy", "Rent levels and annual increases", "Amenities that actually price"] },
       { name: "Costs", points: ["Utilities, labor, maintenance", "Management, insurance, tax", "Whether recent capex raised operating cost"] },
       { name: "External", points: ["Competing rents", "Borough-level demand", "Long-term vs short-term profit"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Apartment Co. can install efficient lighting: 5,000 bulbs per building x 10 buildings; $30/bulb install; 100 kWh saved per bulb per year; electricity $0.15/kWh; 10-year bulb life. What are annual savings, total install cost, and payback?",
+        answer: "$750K/year savings; $1.5M cost; 2-year payback",
+        steps: [
+          "Bulbs = 5,000 x 10 = 50,000.",
+          "kWh saved = 50,000 x 100 = 5,000,000.",
+          "Annual savings = 5,000,000 x $0.15 = $750,000.",
+          "Install = 50,000 x $30 = $1,500,000; payback = 1.5M / 0.75M = 2 years."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Solar alternative: each of 10 buildings has 40 ft x 40 ft usable roof (1,600 sq ft); 400 kWh saved per sq ft per year; $0.15/kWh; install $200/sq ft all-in; 20-year panel life. Annual savings, cost, and payback?",
+        answer: "$960K/year savings; $3.2M cost; ~3.3-year payback",
+        steps: [
+          "Area = 1,600 x 10 = 16,000 sq ft.",
+          "kWh = 16,000 x 400 = 6,400,000.",
+          "Savings = 6,400,000 x $0.15 = $960,000.",
+          "Cost = $200 x 1,600 x 10 = $3,200,000; payback ~ 3.3 years."
+        ],
+        insight: "Lights pay back faster; solar saves more per year and over a 20-year life."
+      }
+    ],
+    creative: {
+      prompt: "Management now pays tenant utilities. What are ways Apartment Co. can reduce utilities expense?",
+      buckets: [
+        {
+          name: "Demand-side",
+          points: [
+            "Encourage AC/lights off",
+            "Tenant rewards for low usage",
+            "Behavioral nudges in leases"
+          ]
+        },
+        {
+          name: "Supply-side / equipment",
+          points: [
+            "Efficient lighting",
+            "Solar",
+            "Automatic on/off",
+            "Building envelope upgrades"
+          ]
+        },
+        {
+          name: "By utility",
+          points: [
+            "Electricity vs gas vs water each need different levers"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "sternofi",
@@ -304,7 +1151,62 @@ export const CASES = [
       { name: "Market and drug", points: ["Indication, patients, price vs current care", "How good the trial data is", "Remaining exclusivity"] },
       { name: "Returns", points: ["Sternofi profit potential", "Price vs H&H hurdle", "Pipeline option value"] },
       { name: "Fit and risk", points: ["Oncology gap in H&H’s portfolio", "Synergies", "Trial, regulatory, and commercial risk"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "US pancreatic-cancer diagnoses are 65,000/year. 'Other' companies treat 15,000 patients. Competitor A has 50% greater patient share than B; C has two-thirds less patient share than A (i.e. C = 0.5 x B if A = 1.5B). Sternofi will capture twice B's patient share. Other companies take 1/5 of the $1.5B revenue market ($300M), so other price = $20K/patient. C is priced the same as other; B charges 25% more than that; A charges $10,000 less than C. What are Sternofi's patients, price, and revenue?",
+        answer: "20,000 patients at $35K; $700M revenue",
+        steps: [
+          "Let B = X thousand patients. Then A = 1.5X, Sternofi = 2X, C = 0.5X, other = 15. Sum: 2X+1.5X+X+0.5X+15 = 65 → 5X = 50 → X = 10.",
+          "Patients (000s): Sternofi 20, A 15, B 10, C 5, other 15.",
+          "Other price = 300M / 15,000 = $20K; C = $20K; B = $25K; A = $10K.",
+          "Sternofi revenue = 1,500 - 150 - 250 - 100 - 300 = $700M; price = 700M / 20,000 = $35K."
+        ],
+        insight: "Sternofi would be #1 by both patients (~31%) and revenue (~47%)."
+      },
+      {
+        kind: "definite",
+        prompt: "Sternofi asks $2.3B cash. Years 1-4: $0 revenue and $50M/year development cost. Years 5-8: $700M revenue, $20M fixed cost, 20,000 treatments x $4,000 variable cost. H&H wants 8-year payback. Does it clear?",
+        answer: "No — ~8.17 years (cumulative NI $2.2B vs $2.3B price)",
+        steps: [
+          "Years 5-8 NI = 700M - 20M - 20k x $4k = 700 - 20 - 80 = $600M/year.",
+          "Years 1-4 NI = -$50M x 4 = -$200M.",
+          "Cumulative NI by year 8 = -200 + 4 x 600 = $2,200M < $2,300M.",
+          "Payback = 4 + (2300+200)/600 = 4 + 4.17 = 8.17 years."
+        ],
+        insight: "It is close enough that synergies, ex-US sales, or other pipeline drugs can justify a go."
+      }
+    ],
+    creative: {
+      prompt: "If H&H acquires Sternofi for Deanraghutumab, what risks should it worry about, and how might it mitigate them?",
+      buckets: [
+        {
+          name: "Regulatory / legal",
+          points: [
+            "FDA approval risk",
+            "DoJ merger review",
+            "Remaining patent life"
+          ]
+        },
+        {
+          name: "Commercial",
+          points: [
+            "Insurance reimbursement",
+            "Overseas launch capability",
+            "Competitor pipeline drugs"
+          ]
+        },
+        {
+          name: "Mitigants",
+          points: [
+            "Stage the cash (earnouts on approval)",
+            "Keep Sternofi's clinical team",
+            "Model a lower share than 20k patients"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "cups",
@@ -322,7 +1224,66 @@ export const CASES = [
       { name: "Market and pricing", points: ["US cup market size", "Willingness to pay vs competitors", "Cannibalization of pads and tampons"] },
       { name: "Commercial", points: ["Sustainability story and target segment", "Long-term customer savings vs one-time price", "Channel and education"] },
       { name: "Risks", points: ["R&D and manufacturing cost", "Brand stretch", "New entrants"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "market-sizing",
+        prompt: "Size the US silicone menstrual-cup market. Use: US population 330M; 50% female = 165M; even age distribution from 0-80 (eight 10-year bands); menstruation ages 10-50; 10% willingness to use; comparable price $40. Also state year-1 TAM if P&G captures 10% (aggressive) or 5% (conservative).",
+        answer: "$330M TAM; $33M / $16.5M captured",
+        steps: [
+          "US 330M; female 50% = 165M.",
+          "Even 0-80 / 8 = 20.625M per 10-year band.",
+          "Ages 10-50 = 4 bands = 82.5M.",
+          "10% WTP = 8.25M users x $40 = $330M TAM.",
+          "10% capture $33M; 5% capture $16.5M."
+        ]
+      },
+      {
+        kind: "market-sizing",
+        prompt: "A survey of US women 18-50 finds 40% undecided on switching to a cup. P&G believes it can convert one-quarter of that undecided 40% (an extra 10 points of willingness). Starting from 82.5M menstruating women, 20% WTP, $40 price, what is the adjusted TAM and 10%/5% year-1 capture?",
+        answer: "16.5M WTP; $660M TAM; $66M / $33M capture",
+        steps: [
+          "WTP = 20% x 82.5M = 16.5M.",
+          "TAM = 16.5M x $40 = $660M.",
+          "10% capture $66M; 5% $33M."
+        ],
+        insight: "Marketing the undecided 40% can double the addressable pool."
+      },
+      {
+        kind: "definite",
+        prompt: "Price the cup to offset cannibalization. Use 16.5M addressable users and 10% year-1 capture (1.65M users). Current-care annual spend per switcher: tampons $7 x 10 = $70, pads $7 x 2 = $14, liners $6 x 1 = $6, total $90. Complementary (new) spend: discs $15 x 2 = $30, wash $7 x 4 = $28, wipes $6.75 x 4 = $27, total ~$85. Cup lasts 5 years. PV cannibalized care at 10% discount on the 5-year total ≈ $675M. PV complementary at 10% ≈ $637.5M. R&D is $12M (treat as a cost to recover). Break-even unit price = (cannibalized PV + R&D - complementary PV) / 1.65M users.",
+        answer: "~$30 per cup",
+        steps: [
+          "Annual care x 1.65M = $148.5M; x 5 years = $742.5M; PV at 10% ≈ $675M.",
+          "Annual complementary x 1.65M = $140.25M; x 5 = $701.25M; PV ≈ $637.5M.",
+          "Net to recover = 675 + 12 - 637.5 = $49.5M.",
+          "Price = 49.5M / 1.65M = $30/cup."
+        ],
+        insight: "A ~$30 cup offsets lost pad/tampon profit after complementary attach."
+      }
+    ],
+    creative: {
+      prompt: "P&G has seen rising sustainability interest. How should it market the cup, and how can it lean into sustainability on Tampax/Always as well?",
+      buckets: [
+        {
+          name: "Cup 4Ps",
+          points: [
+            "Product: ease of use and new silicone",
+            "Price: at WTP / ~$30 break-even",
+            "Place: pharmacies and DTC",
+            "Promotion: lifetime savings vs pads, influencers, sustainability story"
+          ]
+        },
+        {
+          name: "Rest of the franchise",
+          points: [
+            "Biodegradable materials and less packaging",
+            "Ingredient transparency / organic lines",
+            "Sustainability campaigns that do not require every user to switch to a cup"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "fungicide",
@@ -340,7 +1301,61 @@ export const CASES = [
       { name: "Revenue", points: ["Price × volume of Formula X", "Contracted vs spot", "Licensing the design"] },
       { name: "Costs", points: ["Plant and other fixed", "COGS, labor, distribution", "Utilization"] },
       { name: "Other", points: ["Patent life", "Competition and resistance", "Crop and geography mix"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Formula X currently runs 2 batches/day and loses $5,000 per batch ($10,000/day) with $160K revenue per batch. If the plant runs a 3rd batch: labor/misc rises from $20K to $25K; the scrubber still only needs two cycles because waste goes from 600 to 900 kg/day vs 1,000 kg cleaned in two cycles; total cost of the 3rd batch is $150K at the same $160K revenue. What is the effect on daily operating profit?",
+        answer: "The 3rd batch earns $10K and offsets the $10K/day loss — operations break even",
+        steps: [
+          "Current: 2 x -$5K = -$10K/day.",
+          "3rd-batch contribution = 160K - 150K = +$10K.",
+          "Net = 0. Scrubber does not add a third cycle, which is why marginal cost falls."
+        ],
+        insight: "Fixed scrubber cycles make extra batches much cheaper than the first two."
+      },
+      {
+        kind: "definite",
+        prompt: "Reject pellets can be re-injected before the granulator (best: at the mixer). Each batch's 150 kg reject pile yields 150 x 80% x 80% = 96 kg of good product after another granulator and screen pass, sold at $200/kg. The scrubber has 100 kg spare capacity at 3 batches/day and 2 cycles; each reject pile adds 36 kg of waste, so only two piles/day fit without a costly extra scrubber cycle. Ignore recycle capex. What is incremental operating profit per batch and per day?",
+        answer: "$19,200 per batch; $38,400 per day (two piles)",
+        steps: [
+          "Recovered kg = 150 x 0.8 x 0.8 = 96 kg.",
+          "96 x $200 = $19,200 per batch.",
+          "Two batches of recycle/day = $38,400.",
+          "A third pile would force another scrubber cycle and a net ~$800 loss — do not run it."
+        ]
+      }
+    ],
+    creative: {
+      prompt: "Formula X is losing money. Brainstorm ways to restore profitability. (Buyers and suppliers are locked in 5-year contracts; heavy capex is not available.)",
+      buckets: [
+        {
+          name: "Operations",
+          points: [
+            "Run three batches/day",
+            "Reuse screen rejects",
+            "Cut misc/labor and scrubber cost"
+          ]
+        },
+        {
+          name: "Supplier (limited now)",
+          points: [
+            "Renegotiate later",
+            "Cheaper inputs / lower unusable content",
+            "Bulk discounts"
+          ]
+        },
+        {
+          name: "Buyer (limited now)",
+          points: [
+            "Renegotiate later",
+            "Sell retail",
+            "Adjust target crop/geography",
+            "Advertise"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "hybrid-work",
@@ -358,7 +1373,59 @@ export const CASES = [
       { name: "Current footprint vs plan", points: ["Lease remaining and breakage", "One-time enablement cost", "Ongoing occupancy save"] },
       { name: "Cash over two years", points: ["Annual savings vs investment", "Whether the CEO’s near-term efficiency claim holds", "Timing of cash flows"] },
       { name: "Qualitative", points: ["Production collaboration", "Talent", "Hybrid market norms"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Galloway's current NYC lease is 16,000 sq ft (5,000 communal, 10,000 desk, 1,000 server) at $8.33/sq ft/month. Proposed Soho space is 2,500 communal + 7,500 desk (no server) at $6.67/sq ft/month. Servers move to 1,000 sq ft in New Jersey at $5/sq ft/month. What is current annual rent, future annual rent, and annual savings?",
+        answer: "Current $1.6M; future $860K; save $740K/year",
+        steps: [
+          "Current = 16,000 x $8.33 x 12 ≈ $1,600,000.",
+          "Soho = 10,000 x $6.67 x 12 ≈ $800,000.",
+          "NJ server = 1,000 x $5 x 12 = $60,000.",
+          "Future $860K; savings $740K."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Annual occupancy save is $740K, but hybrid adds $250K/year software licenses. One-time: moving $250K, lease breakage $250K, tech implementation $500K. On a nominal (no PV) basis, what is two-year cash impact vs the CEO's cash-neutral-in-two-years hurdle?",
+        answer: "-$20K over two years — misses cash-neutral",
+        steps: [
+          "Net annual save = 740K - 250K license = $490K.",
+          "Two-year save = $980K.",
+          "One-time = 500 + 250 + 250 = $1,000K.",
+          "Net = 980 - 1,000 = -$20K."
+        ],
+        insight: "The CEO's 'near-term efficiency' claim is wrong on a 2-year clock; the move may still be right strategically."
+      }
+    ],
+    creative: {
+      prompt: "What costs and benefits should Galloway weigh beyond the 2-year cash math?",
+      buckets: [
+        {
+          name: "One-time / quantitative",
+          points: [
+            "Move cost, lease break, collaboration tech",
+            "Whether Soho actually fits production workflows"
+          ]
+        },
+        {
+          name: "People and production",
+          points: [
+            "Documentary/film collaboration in person",
+            "Talent attraction via hybrid norms",
+            "Employee reaction to leaving Union Square"
+          ]
+        },
+        {
+          name: "Strategic",
+          points: [
+            "Access to talent in other filmmaking hubs",
+            "Two-year hurdle may be too short for a workplace strategy"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "toto-foundation",
@@ -376,7 +1443,47 @@ export const CASES = [
       { name: "Capabilities and funding", points: ["Drone range and payload", "Deployment experience", "Grant vs no extra funding"] },
       { name: "Need and location", points: ["Food, medicine, agriculture, security", "Where others already serve", "Political stability"] },
       { name: "Feasibility", points: ["Infrastructure", "Regulation", "Personnel and partnerships"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Vaccine/medicine drone delivery in Senegal vs Guinea, 300 flying days/year. Senegal: 100 vials/flight, 250 mile round-trip, $0.80/mile, 10 flights/day, $400K ground/regulatory per year. Guinea: 80 vials/flight, 500 miles, $1.00/mile, 5 flights/day, $250K ground/regulatory. Drone capex is already in the grant; product is donated. Compare annual cost and vials delivered.",
+        answer: "Both cost $1.0M/year; Senegal 300,000 vials vs Guinea 120,000",
+        steps: [
+          "Senegal fuel = 250 x $0.80 x 10 x 300 = $600K; + $400K = $1.0M. Vials = 100 x 10 x 300 = 300,000.",
+          "Guinea fuel = 500 x $1.00 x 5 x 300 = $750K; + $250K = $1.0M. Vials = 80 x 5 x 300 = 120,000.",
+          "Same $1M annual grant; Senegal delivers 2.5x the medicine because flights are shorter."
+        ],
+        insight: "Pick Senegal on impact per grant-dollar; lower variable cost also scales better."
+      }
+    ],
+    creative: {
+      prompt: "The foundation shortlisted five African countries for vaccine drone delivery. What factors should it use to pick two, before looking at a data exhibit?",
+      buckets: [
+        {
+          name: "Population / density",
+          points: [
+            "Drones add most value where roads are thin and density is low-to-moderate",
+            "Population large enough to matter"
+          ]
+        },
+        {
+          name: "Health need",
+          points: [
+            "Vaccination rates",
+            "Deaths from preventable disease"
+          ]
+        },
+        {
+          name: "Safety and feasibility",
+          points: [
+            "Danger to nonprofit workers",
+            "Ease of doing business / regulation",
+            "Political stability"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "wifi-in-the-sky",
@@ -394,7 +1501,50 @@ export const CASES = [
       { name: "Economics", points: ["Pricing model (free, paid, ad-supported)", "Take rate and demand", "Upfront vs ongoing cost and vendor split"] },
       { name: "Product and tech", points: ["Speed, bandwidth shared across the cabin", "Over-water availability", "White-label vs branded"] },
       { name: "Go-to-market", points: ["Rollout timing", "Crew and marketing", "Contract length and lock-in"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "The airline will white-label IFC on all 90 aircraft: 10 widebody (300 seats, 2,500 flights/year) and 80 narrowbody (100 seats, 27,500 flights/year). Capex is $250K per plane; the airline pays 40%. Contribution margin is $10 per WiFi session (one session = the whole flight). Assume 100% load factor and all aircraft outfitted at once. What take rate over 2 years is needed to recover the airline's share of investment?",
+        answer: "12.9%",
+        steps: [
+          "Airline capex/plane = $250K x 40% = $100K.",
+          "Total investment = 10 x $100K + 80 x $100K = $9M.",
+          "Two-year passengers = 10x300x2,500x2 + 80x100x27,500x2 = 1.5M + 5.5M = 7M.",
+          "7M x take rate x $10 = $9M → take rate = 12.9%."
+        ],
+        insight: "Paid IFC take rates today are only 5-10%, so 12.9% is a stretch without a better offer or a slower rollout."
+      }
+    ],
+    creative: {
+      prompt: "Paid-connectivity take rates today are only 5-10%, below the 12.9% break-even. What variables are correlated with higher IFC take rate?",
+      buckets: [
+        {
+          name: "Flight characteristics",
+          points: [
+            "Longer flights",
+            "Daytime vs red-eye",
+            "Whether other IFE is available"
+          ]
+        },
+        {
+          name: "Product",
+          points: [
+            "Price",
+            "Speed and quality",
+            "Number of connected devices"
+          ]
+        },
+        {
+          name: "Passenger",
+          points: [
+            "Cabin class",
+            "Business vs leisure",
+            "Age / income"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "flashpro",
@@ -412,7 +1562,49 @@ export const CASES = [
       { name: "Market", points: ["Competitors, substitutes, customers", "US vs international mix", "Adjacent use cases beyond action sports"] },
       { name: "Profitability", points: ["Price, volume, share", "COGS and 50% gross margin", "R&D, S&M, G&A"] },
       { name: "Growth ideas", points: ["New segments", "Channel mix", "Accessories and software"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "US action-camera addressable units in 2018 are 16 million. 85% of that market buys a camera; FlashPro has 30% share; price $250. International is 40% of FlashPro sales and US is 60%. COGS is 50% of sales. Amounts can be kept in thousands. What is 2018 gross profit?",
+        answer: "$850M gross profit on $1.7B sales",
+        steps: [
+          "US sales = 16M x 85% x 30% x $250 = $1.02B.",
+          "International = 1.02B x (40/60) = $0.68B.",
+          "Total sales = $1.70B; COGS 50% = $0.85B; GP = $0.85B."
+        ],
+        insight: "US category growth is flattening; GP dollars will stall unless FlashPro finds new geos or uses."
+      }
+    ],
+    creative: {
+      prompt: "US camera growth is limited and competition is fierce. How can FlashPro grow revenue?",
+      buckets: [
+        {
+          name: "4Ps / core",
+          points: [
+            "Product attributes and accessories",
+            "Price architecture",
+            "Retail vs web mix",
+            "Advertising"
+          ]
+        },
+        {
+          name: "New markets",
+          points: [
+            "New geographies",
+            "Adjacent use cases beyond action sports",
+            "Software/subscription"
+          ]
+        },
+        {
+          name: "How to get there",
+          points: [
+            "Organic build",
+            "M&A"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "take-your-pills",
@@ -430,7 +1622,50 @@ export const CASES = [
       { name: "Revenue build", points: ["Eligible patients × diagnosis × treatment × adherence × price", "Penetration vs remaining untreated", "Persistence over time"] },
       { name: "Market context", points: ["Monopoly / orphan status", "Exclusivity runway", "Why growth can stall even without rivals"] },
       { name: "Levers", points: ["Find more patients", "Improve adherence", "Price and support programs"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Foci's 2021 base: 3,750 existing patients (BoY) with 50% persistence and 40% adherence; 4,000 new patients (all in at BoY) with 50% persistence and 60% adherence; $500,000 annual list price. Average patients in year = (BoY + EoY)/2. A $300M campaign would raise adherence +5 points and persistence +10 points for both groups. Gross margin is 80%. What is 2021 revenue with vs without the campaign, incremental margin, and does it break even on $300M?",
+        answer: "Without $1.46B; with $1.715B; incremental margin $204M — does not cover $300M",
+        steps: [
+          "Without, existing: EoY 3,750 x 50% = 1,875; avg 2,812.5 ~ 2,800; rev 2,800 x 40% x $500K = $560M.",
+          "Without, new: EoY 2,000; avg 3,000; rev 3,000 x 60% x $500K = $900M; total $1.46B.",
+          "With, existing: EoY 2,250; avg 3,000; rev 3,000 x 45% x $500K = $675M.",
+          "With, new: EoY 2,400; avg 3,200; rev 3,200 x 65% x $500K = $1.04B; total $1.715B.",
+          "Delta revenue $255M x 80% = $204M < $300M cost (~20% revenue lift)."
+        ],
+        insight: "Year-1 economics miss break-even; multi-year persistence compounding could still justify it."
+      }
+    ],
+    creative: {
+      prompt: "US growth slowed even though Foci has a monopoly rare-disease drug. Besides this adherence campaign, what levers could reverse the slowdown?",
+      buckets: [
+        {
+          name: "Find more patients",
+          points: [
+            "Physician education / diagnosis",
+            "Screening programs",
+            "Geographic expansion inside the US"
+          ]
+        },
+        {
+          name: "Keep patients on drug",
+          points: [
+            "Adherence and persistence support",
+            "Nurse/hub services",
+            "Copay assistance"
+          ]
+        },
+        {
+          name: "Price / mix (careful)",
+          points: [
+            "Support programs rather than list-price cuts",
+            "Prepare for exclusivity expiry"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "great-burger",
@@ -448,7 +1683,65 @@ export const CASES = [
       { name: "Standalone value of HD", points: ["Doughnut market growth", "Store growth and SSS", "Margins and capital to grow"] },
       { name: "Fit", points: ["Brand quality side by side", "Customer overlap", "Management and culture", "Two franchise structures"] },
       { name: "Synergies", points: ["Shared real estate or dayparts", "Procurement and G&A", "Cross-marketing"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "market-sizing",
+        prompt: "Size the US doughnut market today and in five years. Use $10 of doughnut consumption per person per year today, $20 in five years, and a US population of 300 million. Heavenly Donuts currently has $700M of US sales — what is its implied share today (round to 25% if you are close)?",
+        answer: "Today $3B (HD ~23%, round to 25%); year 5 $6B",
+        steps: [
+          "Today TAM = $10 x 300M = $3B.",
+          "HD share = $700M / $3B ~ 23%; round to 25% for later math.",
+          "Year-5 TAM = $20 x 300M = $6B."
+        ],
+        insight: "Category dollars double even before HD takes share."
+      },
+      {
+        kind: "definite",
+        prompt: "Heavenly Donuts has $700M US sales today and 1,000 North American stores (use 1,000 of 1,020 total). US doughnut consumption is $10/person/year on 300M people, doubling to $20 in 5 years. GB thinks it can double HD's US share in 5 years and grow store count 2.5x. Round today's share to 25%. What sales per store does HD need in year 5?",
+        answer: "$1.2M sales per store",
+        steps: [
+          "Today's US market = $10 x 300M = $3B; HD share 700/3000 ~ 23% → round to 25%.",
+          "Year-5 market = $20 x 300M = $6B; HD sales = 25% x 2 x $6B = $3B.",
+          "Stores = 1,000 x 2.5 = 2,500.",
+          "Sales/store = 3B / 2,500 = $1.2M.",
+          "That is less than 2x same-store growth while consumption doubles — plausible."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "GB may sell HD doughnuts in GB stores: 50,000 doughnuts/store at $2, 60% margin, cannibalizing 10% of a GB store's 300,000 units at $3 and 50% margin. What is incremental profit per GB store?",
+        answer: "$5,000 per store",
+        steps: [
+          "HD contribution = 50K x $2 x 60% = $60K.",
+          "Cannibalized GB contribution = 300K x 10% x $3 x 50% = $45K.",
+          "Incremental profit = 60 - 45 = $5K/store."
+        ],
+        insight: "Cross-selling looks modest once cannibalization of breakfast combos is counted."
+      }
+    ],
+    creative: {
+      prompt: "What potential synergies exist between Great Burger and Heavenly Donuts?",
+      buckets: [
+        {
+          name: "Lower cost",
+          points: [
+            "Combine corporate SG&A",
+            "Some food-cost scale (beverages, oil) though recipes differ",
+            "GB's lease-negotiation skill on HD sites"
+          ]
+        },
+        {
+          name: "Higher revenue",
+          points: [
+            "Doughnuts in GB stores / selected GB items in HD",
+            "GB's international playbook for HD",
+            "Better site selection (GB sales/store above industry, HD below)",
+            "Faster HD unit growth using GB's balance sheet"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "uranus-co",
@@ -466,7 +1759,62 @@ export const CASES = [
       { name: "Revenue", points: ["Tickets", "Onboard food, retail, activities", "Broadcasting or media rights"] },
       { name: "Costs", points: ["Ships, launch pad, insurance, marketing", "Fuel, maintenance, crew", "Capacity utilization"] },
       { name: "Market and risk", points: ["Addressable luxury demand", "Competition", "Safety, regulation, IP"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "market-sizing",
+        prompt: "Estimate annual luxury orbital-cruise tickets. World population 8B; 0.1% are millionaires; 5/8 of those meet health/age screens (asthma, age, and 'live in a city' are red herrings if offered); 60% of eligibles would want to go (count 'yes' and 'maybe'); 2.3 tickets per interested person (party size). What is annual ticket demand?",
+        answer: "6.9 million tickets",
+        steps: [
+          "Millionaires = 8B x 0.1% = 8M.",
+          "Eligible = 8M x 5/8 = 5M.",
+          "Want to travel = 5M x 60% = 3M people.",
+          "Tickets = 3M x 2.3 = 6.9M."
+        ],
+        insight: "Survey bias (US millionaires only, self-reported health) could overstate 6.9M."
+      },
+      {
+        kind: "definite",
+        prompt: "Uranus wants 20% of the 6.9M-ticket market and 2-year break-even. Operations: 150 ships x 2 trips/ship/month x 12 months; 400 tickets/trip. Build cost $1.5B/ship. Annual: fuel 500k gallons/trip x 3,600 trips x $5/gallon; maintenance $100K/trip; 10 launch pads x $10M; insurance $450M + payroll $40M + marketing $50M. Revenue $400K ticket + $100K other per customer; variable cost $400K per customer. At capacity, can it hit 20% share, and what is break-even time?",
+        answer: "Capacity 1.44M tickets (20.9% share); break-even ~1.7 years",
+        steps: [
+          "Trips = 2 x 12 x 150 = 3,600/year; tickets = 400 x 3,600 = 1.44M; 1.44/6.9 = 20.9%.",
+          "Build = 1.5B x 150 = $225B.",
+          "Annual fixed = 500k x 3,600 x $5 + 100K x 3,600 + 100M + 540M = 9B + 0.36B + 0.10B + 0.54B = $10B.",
+          "Contribution/customer = 500K - 400K = $100K; annual contribution = 100K x 1.44M = $144B.",
+          "Annual profit vs fixed = 144B - 10B = $134B; years = 225 / 134 ≈ 1.68."
+        ],
+        insight: "Capacity and 2-year BE both clear — the risk is whether 20% share and $400K tickets are real."
+      }
+    ],
+    creative: {
+      prompt: "Besides tickets, what could Uranus do to make the orbital cruise more profitable or less risky?",
+      buckets: [
+        {
+          name: "Revenue",
+          points: [
+            "Onboard food, retail, activities",
+            "Broadcast / media rights",
+            "Partnerships with luxury brands"
+          ]
+        },
+        {
+          name: "Cost and capacity",
+          points: [
+            "Utilization of the 150-ship fleet",
+            "Insurance and safety as a selling point",
+            "Phased ship build vs 150 on day one"
+          ]
+        },
+        {
+          name: "Risk",
+          points: [
+            "Regulation and accidents",
+            "IP / competitive response from SpaceX and MoonShine"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "green-dreamz",
@@ -484,7 +1832,61 @@ export const CASES = [
       { name: "Market", points: ["Colorado vs other states", "Share and consolidation", "Price-led demand and regulation"] },
       { name: "Profit structure", points: ["Medical vs rec mix and ticket", "Cultivation vs wholesale vs retail", "Fixed store costs and taxes"] },
       { name: "Growth", points: ["New stores or M&A", "Infused products", "Brand vs price", "Where regulation blocks interstate"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Green Dreamz mix and prices: medical basket 50% flower $120, 20% edibles $45, 15% concentrates $35, 10% vapes $40, 5% topicals $25; recreational 60% flower $75, 10% $20, 10% $20, 15% $30, 5% $20. Visits/store/month: 1,500 medical-only (3 stores), 9,500 rec-only (4 stores), 5,000 dual (5 stores) of which 90% are rec. Round medical ticket to $80 and rec to $55, monthly store revenue to $4M. Add $2M/year wholesale trim. Costs: rent $10M, labor $12M, R&D $1M, SG&A $6M, COGS 24% of $50M revenue, legal $1M. What is pre-tax profit and margin?",
+        answer: "$8M pre-tax profit; 16% margin",
+        steps: [
+          "Medical ticket = 0.5x120 + 0.2x45 + 0.15x35 + 0.1x40 + 0.05x25 = $79.50 ~ $80.",
+          "Rec ticket = 0.6x75 + 0.1x20 + 0.1x20 + 0.15x30 + 0.05x20 = $54.50 ~ $55.",
+          "Monthly = 80x1500x3 + 55x9500x4 + (0.9x5000x55 + 0.1x5000x80)x5 = $3.8875M ~ $4M; x12 = $48M + $2M trim = $50M.",
+          "COGS = 24% x 50 = $12M; total cost 10+12+1+6+12+1 = $42M.",
+          "Profit = $8M; margin 16%."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Treetops does 30% of Green Dreamz revenue at an 18% profit margin. Discount rate 15%, perpetual growth 6%. What NPV / bid is implied?",
+        answer: "$30M",
+        steps: [
+          "Treetops revenue = 50M x 30% = $15M.",
+          "Profit = 15M x 18% = $2.7M.",
+          "NPV = 2.7M / (0.15 - 0.06) = $30M."
+        ],
+        insight: "Treetops' higher margin likely comes from in-house infused products."
+      }
+    ],
+    creative: {
+      prompt: "Colorado is saturated and consumers still buy on price. How can Green Dreamz grow revenue? Use existing vs new customers and existing vs new products.",
+      buckets: [
+        {
+          name: "Existing customers, existing products",
+          points: [
+            "Loyalty, pack sizes, happy-hour pricing, bundles"
+          ]
+        },
+        {
+          name: "Existing customers, new products",
+          points: [
+            "Merch, accessories, in-house infused, new strains, cultivation tours, cooking classes"
+          ]
+        },
+        {
+          name: "New customers, existing products",
+          points: [
+            "Marketing, tourism partnerships, new Colorado stores, online pre-order"
+          ]
+        },
+        {
+          name: "New customers, new products",
+          points: [
+            "M&A of infused/dispensary/cultivation, CBD-only, licensing, franchising, consulting"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "jimmys-dilemma",
@@ -502,7 +1904,52 @@ export const CASES = [
       { name: "Compensation value", points: ["Salary, bonus, signing", "Growth/raises", "DCF to compare timing"] },
       { name: "Career value", points: ["Exit opportunities", "Training and brand", "Firm performance"] },
       { name: "Fit", points: ["Lifestyle and risk", "Three-year horizon", "Prestige vs second-tier trajectory"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Jimmy will stay 3 years. Cash by year (Year 0 = signing, then years 1-3 of work), $000s. Firm A: signing 30; salary 0/91/114/126; annual bonus 0/30/30/30; tuition reimbursement 0/0/0/78. Firm B: signing 40; salary 0/97/121/147; annual bonus 0/35/35/35; no tuition. A simplified 10% DCF maps A's totals 30/121/144/234 to 30/110/120/180 and B's 40/132/156/182 to 40/120/130/140. What is each offer's NPV?",
+        answer: "Firm A $440K; Firm B $430K",
+        steps: [
+          "Firm A totals: Y0 30; Y1 91+30=121; Y2 114+30=144; Y3 126+30+78=234.",
+          "Firm B totals: Y0 40; Y1 97+35=132; Y2 121+35=156; Y3 147+35=182.",
+          "Simplified PV: A 30+110+120+180 = 440; B 40+120+130+140 = 430."
+        ],
+        insight: "A wins on cash NPV by $10K, almost entirely from year-3 tuition."
+      },
+      {
+        kind: "definite",
+        prompt: "Year-4 exit salary distributions: Firm A — $150k 20%, $175k 40%, $200k 25%, $225k 10%, $250k 5%. Firm B — $150k 0%, $175k 10%, $200k 20%, $225k 50%, $250k 20%. The cash NPV gap was $10K in A's favor. Using expected exit salary, is the $35K year-4 gap enough to flip the decision if its PV is about $25K (35 / 1.4)?",
+        answer: "Yes — Firm B's exit EV is $220K vs A's $185K; ~$25K PV > $10K gap",
+        steps: [
+          "A EV = 150*0.2 + 175*0.4 + 200*0.25 + 225*0.1 + 250*0.05 = $185K.",
+          "B EV = 175*0.1 + 200*0.2 + 225*0.5 + 250*0.2 = $220K.",
+          "Gap $35K; PV ~ $25K exceeds the $10K offer-NPV gap, so B wins once exits are counted."
+        ]
+      }
+    ],
+    creative: {
+      prompt: "Besides discounted cash, what should Jimmy consider before accepting?",
+      buckets: [
+        {
+          name: "Financial (beyond the offer sheet)",
+          points: [
+            "Exit opportunities and year-4 pay",
+            "Firm financial stability",
+            "Bonus variability"
+          ]
+        },
+        {
+          name: "Non-financial",
+          points: [
+            "Prestige / brand of Firm B vs second-tier A",
+            "Staffing model, travel, location",
+            "Culture and training",
+            "Type of work"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "mordmotor",
@@ -520,7 +1967,72 @@ export const CASES = [
       { name: "Auto market", points: ["ICE vs EV size and growth", "Competitive set", "Suburban/remote-work demand"] },
       { name: "Revenue levers", points: ["Price vs volume", "New models including EV", "Mix of luxury vs economy"] },
       { name: "Cost and external", points: ["Factory switchover", "Supply chain", "Regulation"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "market-sizing",
+        prompt: "Size the US retail EV market this year. Sample method: 100 million households; cars replaced every 5 years so 20% buy a new car this year; 20% of those choose EV over ICE; of EV buyers, 75% economy at $40K and 25% luxury at $100K. What is dollar TAM?",
+        answer: "~$220B",
+        steps: [
+          "100M households x 20% = 20M new cars/year.",
+          "20% EV = 4M EVs.",
+          "3M x $40K + 1M x $100K = $120B + $100B = $220B."
+        ],
+        insight: "The US EV pocket is hundreds of billions even at a 20% take rate."
+      },
+      {
+        kind: "market-sizing",
+        prompt: "Cross-check the US EV market from population: US 320M people; 25% prefer luxury vehicles (80M) vs 75% economy (240M); 2.5 people per household; 20% of households buy a car this year; ~20% of those buy EV; luxury EV $100K, economy $40K. What is dollar TAM?",
+        answer: "~$270B",
+        steps: [
+          "Luxury HH = 80M / 2.5 = 32M; economy HH = 96M.",
+          "New cars = 32M x 20% = 6.4M luxury + 19.2M economy.",
+          "EVs = 20% → 1.2M luxury + 3.8M economy.",
+          "1.2M x $100K + 3.8M x $40K = $120B + $152B ≈ $270B."
+        ],
+        insight: "Mix (luxury vs economy) swings dollar TAM by ~$50B versus a household-first build."
+      },
+      {
+        kind: "definite",
+        prompt: "MordMotor can fund only one EV. Model X: 10,000 units at $160K; unit cost raw materials $115K + labor $10K; annual distribution $50M, marketing $40M, SG&A $10M; R&D already spent $250M. Model Y: 30,000 units at $50K; unit cost $30K + $10K; distribution $60M, marketing $30M, SG&A $10M; R&D already spent $50M. Yearly profit = unit profit x units - annual fixed (exclude sunk R&D first). Then break-even years using own R&D and using combined $300M R&D. Which model?",
+        answer: "X: $250M/year, BE 1.0 yr own R&D / 1.2 yr with $300M; Y: $200M/year, BE 0.25 yr / 1.5 yr — X wins if both R&D counted",
+        steps: [
+          "X unit profit = 160 - 125 = $35K; contribution 10K x 35K = $350M; fixed 50+40+10 = $100M; yearly profit $250M.",
+          "Y unit profit = 50 - 40 = $10K; contribution 30K x 10K = $300M; fixed 60+30+10 = $100M; yearly profit $200M.",
+          "Own-R&D BE: X 250/250 = 1.0 year; Y 50/200 = 0.25 year.",
+          "Both-R&D $300M: X 300/250 = 1.2 years; Y 300/200 = 1.5 years."
+        ],
+        insight: "Y looks safer on volume; X breaks even faster once the unchosen model's R&D is treated as a joint sunk cost."
+      }
+    ],
+    creative: {
+      prompt: "What should MordMotor consider before entering EVs, besides which of two models to build?",
+      buckets: [
+        {
+          name: "Financial",
+          points: [
+            "Factory and training capex",
+            "Liquidity / loans",
+            "Resale values and price points"
+          ]
+        },
+        {
+          name: "Market and consumer",
+          points: [
+            "Crowded vs open segments",
+            "Differentiation (range, autonomy)",
+            "Charging access and ESG"
+          ]
+        },
+        {
+          name: "External",
+          points: [
+            "Regulation and safety standards",
+            "ICE vs EV mix as suburbs grow"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "curling-careers",
@@ -538,7 +2050,51 @@ export const CASES = [
       { name: "Demand", points: ["Unmet applications", "Growth outlook", "What beneficiaries value"] },
       { name: "Financial constraints", points: ["Rink, transport, labor", "Donor cash flow", "Variable program cost"] },
       { name: "Non-financial constraints", points: ["Staff allocation", "Facility and van capacity", "Admin/onboarding backlog"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "C&C has 14 mentors serving 378 students per week. Mentors work 40 hours/week. Per mentor: 20 minutes of 1:1 time per student; 6 lessons x 1.25 hours planning; 30 minutes classroom instruction per student; leftover time is a weekly HQ report. If the HQ report is removed, extra 1:1 time can serve 3 students per hour. How many additional students can be served per week?",
+        answer: "420 additional students",
+        steps: [
+          "Students per mentor = 378 / 14 = 27.",
+          "1:1 time = 20 min x 27 = 9 hours; planning = 6 x 1.25 = 7.5 hours; classroom = 30 min x 27 = 13.5 hours.",
+          "HQ report = 40 - (9 + 7.5 + 13.5) = 10 hours.",
+          "Extra 1:1 students per mentor = 10 hours x 3 students/hour = 30.",
+          "Across 14 mentors = 420."
+        ],
+        insight: "Admin, not ice or vans, is the binding constraint on mentorship — the highest-demand program."
+      }
+    ],
+    creative: {
+      prompt: "1:1 mentoring has the most unmet demand. How might C&C increase mentorship capacity?",
+      buckets: [
+        {
+          name: "Staffing",
+          points: [
+            "Hire or volunteer more mentors",
+            "Incentives / overtime on existing mentors",
+            "2:1 sessions"
+          ]
+        },
+        {
+          name: "Schedule",
+          points: [
+            "More days of week",
+            "Replace lower-impact sessions (classroom/fitness) with mentoring"
+          ]
+        },
+        {
+          name: "External support",
+          points: [
+            "Donor campaign",
+            "Near-peer (older students mentor younger)",
+            "Zoom mentors from other chapters",
+            "University partners"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "center-stage",
@@ -556,7 +2112,64 @@ export const CASES = [
       { name: "Financials", points: ["Cost to mount each show", "Seats × performances × occupancy × price", "Merch and concessions"] },
       { name: "Demand", points: ["Tourist vs local draw", "Star power vs title recognition", "Competitive Broadway slate"] },
       { name: "Risk", points: ["Rehearsal timeline", "Reviews", "One-man-show vs musical cost structure"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Projected revenue and cost per performance: Beauty and the Beast $60,000 / $45,000; To Kill a Mockingbird $30,000 / $24,000; Steve Live $35,000 / $30,000. Which show has the highest profit margin per performance?",
+        answer: "Beauty and the Beast at 25%",
+        steps: [
+          "Beauty: (60-45)/60 = 25%.",
+          "Mockingbird: (30-24)/30 = 20%.",
+          "Steve Live: (35-30)/35 ≈ 14%."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Beauty and the Beast: 500 seats. Unsold seats dump at $50 starting 2 hours before curtain. Survey full-price take-up: $100 → 80% sell at full price; $150 → 60%; $200 → 40%. Which list price maximizes expected ticket revenue?",
+        answer: "$150 and $200 tie at $55,000 (both beat $100 at $45,000)",
+        steps: [
+          "$100: 400 x $100 + 100 x $50 = $45,000.",
+          "$150: 300 x $150 + 200 x $50 = $55,000.",
+          "$200: 200 x $200 + 300 x $50 = $55,000."
+        ],
+        insight: "Price is a tie on revenue — pick $200 vs $150 on brand, reviews, and marketing cost to lift WTP."
+      },
+      {
+        kind: "definite",
+        prompt: "The team wants 50% WTP at $200 (up from 40%). Non-ticket revenue is $5,000 per performance. Beauty costs are currently $45,000. They must keep a 25% profit margin. What is the maximum extra marketing spend per performance?",
+        answer: "$5,625",
+        steps: [
+          "New ticket revenue = 250 x $200 + 250 x $50 = $62,500.",
+          "Total revenue = 62,500 + 5,000 = $67,500.",
+          "25% margin → costs = 75% x 67,500 = $50,625.",
+          "Max extra marketing = 50,625 - 45,000 = $5,625."
+        ]
+      }
+    ],
+    creative: {
+      prompt: "How should the producing team spend extra money to raise willingness to pay to $200?",
+      buckets: [
+        {
+          name: "Production",
+          points: [
+            "Celebrity cameos",
+            "Revamp dance numbers",
+            "Modernize moments that create buzz",
+            "Awards angle (hard in a 10-week run)"
+          ]
+        },
+        {
+          name: "Media marketing",
+          points: [
+            "Morning-show appearances",
+            "Social/influencer",
+            "Tourist-targeted ads",
+            "Partnerships with hotels"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "back-it-on-up",
@@ -574,7 +2187,54 @@ export const CASES = [
       { name: "Valuation", points: ["DCF", "Comparables", "EBITDA multiple"] },
       { name: "Synergies", points: ["Cross-sell and up-sell", "Headcount and site overlap", "R&D, IT, vendor scale", "Dis-synergies: lost customers, process breakdown"] },
       { name: "Risk", points: ["Talent and culture", "Ukraine/Texas development split", "Overstated synergies", "Regulation"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Value CloudCo with a DCF. 2019 subscription profit (all-in): Tier 1 10 TB at $10/GB/month; Tier 2 25 TB at $8/GB/month; Tier 3 40 TB at $5/GB/month. 1 TB = 1,000 GB. Hurdle rate 13%, expected growth 3%, treat profit as a growing perpetuity. What is standalone value?",
+        answer: "$60M",
+        steps: [
+          "GB: 10k, 25k, 40k.",
+          "Monthly profit = 10k x $10 + 25k x $8 + 40k x $5 = 100k + 200k + 200k = $500K.",
+          "Annual = $6.0M.",
+          "Value = 6M / (13% - 3%) = $60M."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Standalone CloudCo is $60M. Synergies: +$1/GB/month on all 2019 GB (10k + 25k + 40k). Cost synergies are 10% (SG&A) + 15% (headcount) + 5% (R&D) of the annual revenue synergy. Combined profit is current $6M plus total yearly synergy. Discount combined profit at 10% (13%-3%). What is the max BackupCo should pay?",
+        answer: "$71.7M",
+        steps: [
+          "Revenue synergy/month = $1 x 75,000 GB = $75K; x12 = $900K/year.",
+          "Cost synergy = 30% x 900K = $270K.",
+          "Total yearly profit increase = $1.17M; combined profit = $7.17M.",
+          "Value = 7.17M / 0.10 = $71.7M."
+        ]
+      }
+    ],
+    creative: {
+      prompt: "How might you design the post-merger integration structure for BackupCo's acquisition of CloudCo, and what risks worry you?",
+      buckets: [
+        {
+          name: "Integration structure",
+          points: [
+            "Executive steering committee",
+            "IMO/PMO",
+            "Product and synergy-management offices",
+            "Finance/HR, engineering, sales"
+          ]
+        },
+        {
+          name: "Risks",
+          points: [
+            "Texas vs Ukraine vs California culture and talent",
+            "Overstated synergies",
+            "Lost customers in the cutover",
+            "Regulation of backup/cloud data"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "big-shot",
@@ -592,7 +2252,45 @@ export const CASES = [
       { name: "Financial", points: ["Theaters × seats × fill × ticket", "Merch and sequel option", "Production and P&A cost"] },
       { name: "Internal", points: ["Sequel vs original", "Genre expertise", "Talent deals"] },
       { name: "External", points: ["Star and genre heat", "Release-date clashes", "Streaming competition"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "LCA takes $1 per international ticket and $1.50 per domestic ticket. International theaters: 5 shows/day x 400 seats; domestic: 10 shows/day x 200 seats. Use 30-day runs. Theater counts by genre (international / domestic): comedy 1,000 / 1,500; drama 500 / 1,000; action 1,500 / 2,000; animation 750 / 1,000. Fill rates and production costs: Project Huntington (comedy) 80%, $50M; Life at Ivy (drama) 60%, $100M; Case Wars (action) 75%, $75M; Paws at Pav (animation) 80%, $90M. Which title has the highest profit and which the highest ROI? A 'hit' is 50% ROI.",
+        answer: "Action profit $127.5M; comedy ROI 2.12x — recommend Project Huntington",
+        steps: [
+          "Monthly earnings/theater: int'l $1 x 5 x 400 x 30 = $60K; domestic $1.50 x 10 x 200 x 30 = $90K.",
+          "Comedy rev = 0.8x1000x60K + 0.8x1500x90K = $48M + $108M = $156M; profit 156-50 = $106M; ROI 2.12.",
+          "Drama rev $72M; profit -$28M; ROI -0.28.",
+          "Action rev $202.5M; profit $127.5M; ROI 1.70.",
+          "Animation rev $108M; profit $18M; ROI 0.20.",
+          "Comedy and action both clear 50% ROI; comedy has the higher ROI the board wants."
+        ]
+      }
+    ],
+    creative: {
+      prompt: "Other than the profitability math, what strategic decisions should LCA consider for the next movie's success?",
+      buckets: [
+        {
+          name: "Monetization",
+          points: [
+            "Merchandise",
+            "Sequel option",
+            "Streaming/TV windows",
+            "How reviews affect later-week fill"
+          ]
+        },
+        {
+          name: "Content / marketing",
+          points: [
+            "Casting and crew",
+            "Theme vs pop culture",
+            "Channel mix for the P&A budget",
+            "Avoid release-date clashes"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "contagion",
@@ -610,7 +2308,53 @@ export const CASES = [
       { name: "Proceed — financial", points: ["Sponsorship, TV, tickets, licensing", "Remaining operating cost", "Probability-weighted outbreak cost"] },
       { name: "Cancel — financial", points: ["Ignore sunk cost", "Insurance and recoverable cost", "Lost IOC revenue"] },
       { name: "Non-financial", points: ["Lives and athlete participation", "Host-country relationships", "Precedent and PR"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "IOC revenues if the Games proceed: sponsorship $2.1B, tickets $1.8B, licensing $0.19B, TV $3.9B. If cancelled: 75% of sponsorship contracts are already signed and the IOC keeps half of those signed funds; 85% of tickets are already sold and are non-refundable; licensing is kept in full; TV contracts let the IOC keep 40%. What is proceed vs cancel revenue (round to $8B and $4B)?",
+        answer: "Proceed ~$8.0B; cancel ~$4.1B",
+        steps: [
+          "Proceed = 2.1 + 1.8 + 0.19 + 3.9 = $7.99B ~ $8B.",
+          "Cancel sponsorship = 2.1 x 75% x 50% = $0.7875B.",
+          "Cancel tickets = 1.8 x 85% = $1.53B.",
+          "Licensing $0.19B; TV 3.9 x 40% = $1.56B.",
+          "Cancel total = 0.7875 + 1.53 + 0.19 + 1.56 = $4.0675B ~ $4B."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Treat $4B as the expected loss if the virus arrives (cancel-equivalent) and $8B as the expected gain if it does not. At what probability x that the virus reaches the host country is the IOC indifferent between proceeding and the $4B cancel case, using 4x = 8(1-x)?",
+        answer: "66%",
+        steps: [
+          "4B x = 8B (1 - x).",
+          "4x = 8 - 8x → 12x = 8 → x = 2/3 ≈ 66%."
+        ],
+        insight: "Indifference is a high bar; human and host-country costs are not in this equation."
+      }
+    ],
+    creative: {
+      prompt: "What risks does the IOC face in deciding whether to proceed or cancel, beyond the revenue math?",
+      buckets: [
+        {
+          name: "Internal to IOC",
+          points: [
+            "Reputational risk",
+            "Relationship with this host and future hosts",
+            "Precedent vs wartime-only cancellations"
+          ]
+        },
+        {
+          name: "External",
+          points: [
+            "Lives lost",
+            "Athlete health and fairness",
+            "Fan backlash",
+            "Host-country healthcare and economic shock"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "food-frenzy",
@@ -628,7 +2372,37 @@ export const CASES = [
       { name: "Research", points: ["Ethnography and observation", "Focus groups", "Stakeholder interviews"] },
       { name: "Synthesis and design", points: ["Journey maps, personas, service blueprints", "Collaborative insight generation"] },
       { name: "Co-create and test", points: ["Workshops with users and client", "Low-cost prototypes, pilots, A/B tests"] }
-    ]
+    ],
+    creative: {
+      prompt: "Mercado Reforma wants a customer-centered B2C grocery entry in LatAm, not a classic profit tree. How would you structure the project, and what scrappy tests would you run?",
+      buckets: [
+        {
+          name: "Research",
+          points: [
+            "Ethnography / observation of city shoppers",
+            "Focus groups",
+            "Stakeholder interviews",
+            "Persona work (e.g. millennials who need on-the-go and dietary-specific options)"
+          ]
+        },
+        {
+          name: "Synthesis and design",
+          points: [
+            "Journey maps",
+            "Service blueprints",
+            "Collaborative insight generation with the client"
+          ]
+        },
+        {
+          name: "Co-create and test",
+          points: [
+            "Workshops with users",
+            "Low-cost prototypes, pickup lockers, bundled ingredients",
+            "A/B and pilot-market tests before a full rollout"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "hairy-ordeal",
@@ -646,7 +2420,71 @@ export const CASES = [
       { name: "NPV of independent brand", points: ["Clients × price", "Product sales", "Rent, labor, discount rate"] },
       { name: "NPV of buying Deluxe", points: ["Chairs and revenue per stylist", "Purchase price and interest", "Product and rent"] },
       { name: "Other", points: ["Buy vs build", "Risk profile and culture", "Ways to grow either NPV"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Megan Black Balayage: 200 clients, quarterly visits, $150 average, 60% service margin. Shampoo attaches on 25% of visits at $60 and 50% margin; conditioner on 20% of visits at $55 and 50% margin. Rent $500/month. Perpetuity at 5% hurdle. What is NPV of staying independent?",
+        answer: "~$1.53M",
+        steps: [
+          "Service profit = 200 x 4 x $150 x 60% = $72,000.",
+          "Shampoo = 800 x 25% x $60 x 50% = $6,000; conditioner = 800 x 20% x $55 x 50% = $4,400.",
+          "Rent = $6,000/year. NI = 72 + 10.4 - 6 = $76,400.",
+          "NPV = 76,400 / 0.05 = $1,528,000."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Salon Deluxe: 4 stylists, 5 days/week, 10am-7pm with a 1-hour break (8 working hours), 2.5-hour appointments, 250 days/year. Requested appointments 6,000 (so occupancy is capacity-constrained). Spend $150/appointment; stylists take 65% so owner keeps 35%. Rent $4,000/month. Product profit $10,000/year. Discount rate 10%. What is NPV of owning Deluxe as-is (no purchase-price subtraction yet)?",
+        answer: "$1.3M",
+        steps: [
+          "Capacity = (8 / 2.5) x 250 x 4 = 3.2 x 250 x 4 = 3,200 appointments (demand 6,000 → 100% occupancy).",
+          "Service profit = 3,200 x $150 x 35% - 48,000 rent = $168,000 - $48,000 = $120,000.",
+          "Plus $10K product = $130,000.",
+          "NPV = 130,000 / 10% = $1.3M, below independent MBB."
+        ],
+        insight: "As-is Deluxe is worth less than Megan's own chair; unused storage rooms are the unlock."
+      },
+      {
+        kind: "definite",
+        prompt: "Converting unused storage to a dry/style station raises each stylist's capacity 37.5% for $100K (renovation + assistant). Start from $168K service revenue (3,200 x $150 x 35%), add $10K product, subtract $10K interest and $48K rent, capitalize at 10%, then subtract the $100K. What is the new NPV?",
+        answer: "~$1.73M",
+        steps: [
+          "New service = 168K x 1.375 = $231K.",
+          "Cash = 231 + 10 - 10 - 48 = $183K.",
+          "PV = 183K / 0.10 = $1.83M; minus $100K = $1.73M, now above independent MBB."
+        ]
+      }
+    ],
+    creative: {
+      prompt: "What levers could make Salon Deluxe a more attractive business, and which should move the NPV most?",
+      buckets: [
+        {
+          name: "Service revenue",
+          points: [
+            "Increase capacity (unused rooms)",
+            "Loyalty / frequency",
+            "Price (hard in a competitive market)",
+            "A second location"
+          ]
+        },
+        {
+          name: "Service cost",
+          points: [
+            "Renegotiate rent (often locked)",
+            "Vendor COGS",
+            "Stylist revenue-share"
+          ]
+        },
+        {
+          name: "Product and financing",
+          points: [
+            "Bundles and extra SKUs",
+            "Refinance / pay down debt"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "lizard-insurance",
@@ -664,7 +2502,50 @@ export const CASES = [
       { name: "Keep", points: ["Do nothing vs invest to hold share", "Organic growth (limited cross-sell)", "Inorganic — extra acquisitions"] },
       { name: "Sell", points: ["Full sale or spin", "License IP or JV", "Partial sale"] },
       { name: "Fit test", points: ["Investment needed to stay competitive", "Synergies with auto insurance", "Strategic distraction"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "TechSize has 15% of a $5.5B 2020 insurance-software market. EBITDA is 25% of revenue. 2020 deals: Fill-Your-Forms $25M EBITDA sold for $125M; Tech Toy Co $1.5B EBITDA sold for $20B (not comparable); Insurance App Co $300M EBITDA sold for $1.5B. What is a reasonable sale value for TechSize?",
+        answer: "~$1.03B at 5x EBITDA",
+        steps: [
+          "Revenue = 15% x $5.5B = $825M.",
+          "EBITDA = 25% x 825M = $206M.",
+          "Relevant multiples: 125/25 = 5x and 1,500/300 = 5x (drop toys).",
+          "Value = 5 x 206M = $1.03B."
+        ],
+        insight: "A software asset that does not fit DTC auto insurance is still a billion-dollar sale."
+      }
+    ],
+    creative: {
+      prompt: "Lizard Insurance acquired TechSize with MediumSure and has no software DNA. What should it consider doing with TechSize?",
+      buckets: [
+        {
+          name: "Keep",
+          points: [
+            "Hold as-is",
+            "Invest to defend 15% share",
+            "Bolt-on acquisitions",
+            "Limited cross-sell into auto insurance"
+          ]
+        },
+        {
+          name: "Sell / partner",
+          points: [
+            "Full sale at ~5x EBITDA",
+            "Spin / partial sale",
+            "License IP or JV with a software buyer"
+          ]
+        },
+        {
+          name: "Fit test",
+          points: [
+            "Capital needed to stay competitive",
+            "Management distraction from DTC insurance"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "met-with-problems",
@@ -682,7 +2563,62 @@ export const CASES = [
       { name: "Direct HR cost", points: ["Wages and benefits by staff type", "Recruiting and onboarding", "Training, retention, severance"] },
       { name: "Indirect", points: ["Turnover knowledge loss", "Morale", "Underperformance"] },
       { name: "External labor", points: ["Competition for talent", "Unions", "Labor supply"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "2019 Met turnover: Artistic 500 staff, 2.2% turnover, $30K cost each; Executive 20, 10%, $95K; Administrative 1,000, 5.7%, $10K; Security 1,200, 16.67% (1/6), $5K. 2018 turnover cost was $1.5M. What did 2019 turnover cost, and where should Amy focus?",
+        answer: "~$2.09M (up ~39% vs 2018); security is $1.0M of it",
+        steps: [
+          "Artistic: 500 x 2.2% = 11 x $30K = $330K.",
+          "Executive: 2 x $95K = $190K.",
+          "Admin: 1,000 x 5.7% = 57 x $10K = $570K.",
+          "Security: 1,200 x (1/6) = 200 x $5K = $1,000K.",
+          "Total $2.09M vs $1.5M."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Is 1,200 security staff optimal? 250 galleries; museum open 10am-6pm, 350 days/year (use a daily model). Open: 2 guards per gallery; closed: 1 guard per 4 galleries. Staff may work 35 hours/week (5 hours/day average). How many security staff are needed?",
+        answer: "1,000 — about 200 too many today",
+        steps: [
+          "Open: 2 x 250 = 500 posts x 8 hours = 4,000 guard-hours/day → 4,000 / 5 = 800 people.",
+          "Closed: 0.25 x 250 = 62.5 posts x 16 hours = 1,000 guard-hours/day → 1,000 / 5 = 200 people.",
+          "Total 1,000 vs 1,200 on staff."
+        ]
+      }
+    ],
+    creative: {
+      prompt: "Amy wants to cut HR cost in security. Brainstorm ideas along the hiring pipeline.",
+      buckets: [
+        {
+          name: "Sourcing",
+          points: [
+            "Cut ads that do not yield applicants",
+            "Tighter screening criteria",
+            "Employee referrals"
+          ]
+        },
+        {
+          name: "Interviewing / onboarding",
+          points: [
+            "Shared ATS",
+            "Phone screens",
+            "Community-college partnerships",
+            "Online training"
+          ]
+        },
+        {
+          name: "Retention / scheduling",
+          points: [
+            "Fewer guards on slow days",
+            "Limit overtime and severance",
+            "Low-cost perks (museum pass, family day)",
+            "Pathways into salaried museum jobs"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "messi-decision",
@@ -700,7 +2636,57 @@ export const CASES = [
       { name: "Incremental cash", points: ["Tickets, shirts, TV/sponsor lift", "Transfer fee and wages", "Payback within five years"] },
       { name: "Player", points: ["Performance and age curve", "Will he come?", "Cheaper alternatives"] },
       { name: "Risk and rivals", points: ["Injury", "Wage inflation / arms race", "Language and fit"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Value Messi off comparable forwards' transfer-fee / goal-contribution multiples: Ronaldo 117/62 ~ 2x (age 33); Neymar 225/24 ~ 10x (25); Mbappe 310/31 ~ 10x (19); Aubameyang 56/28 ~ 2x (29); Costa 62/28 ~ 2x (27). Messi is 35 with 55 goal contributions. Using ~2.6x for an older superstar, what transfer fee is implied?",
+        answer: "$143M",
+        steps: [
+          "Older elite forwards cluster near 2x; young stars near 10x.",
+          "A conservative ~2.6 x 55 ≈ $143M."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Current club: 60,000 seats, 83.33% full, $50 tickets, 25 home games; $10 F&B per fan; $150M TV; $50M sponsors; 1M jerseys at $100 with 25% club margin. With Messi: sellouts, +$15 ticket, TV +10%, sponsors double, 2M Messi jerseys/year that cannibalize 50% of current jersey sales (price/margin unchanged). Salary $100M + 10% agent fee. Transfer $143M. Current revenue is $300M. What is incremental annual profit, and is 5-year payback met?",
+        answer: "~$30M incremental profit/year; payback ~4.8 years — yes",
+        steps: [
+          "Current: tickets 60k x 5/6 x $50 x 25 = $62.5M; F&B $12.5M; TV+sponsor $200M; jerseys 1M x $25 = $25M; total $300M.",
+          "Future: tickets 60k x $65 x 25 = $97.5M; F&B 60k x $10 x 25 = $15M; TV $165M; sponsors $100M; jerseys 2M x $25 + remaining 0.5M x $25 = $50M + $12.5M = $62.5M; total $440M.",
+          "Delta revenue $140M; extra cost $110M; incremental profit $30M.",
+          "143 / 30 ≈ 4.8 years < 5."
+        ]
+      }
+    ],
+    creative: {
+      prompt: "Besides the transfer math, what should the club weigh on a Messi deal?",
+      buckets: [
+        {
+          name: "Player",
+          points: [
+            "Age-35 output risk",
+            "Will he actually come?",
+            "Cheaper elite alternatives"
+          ]
+        },
+        {
+          name: "Commercial",
+          points: [
+            "Shirt, tickets, TV, sponsors",
+            "Language / league fit"
+          ]
+        },
+        {
+          name: "Risk and rivals",
+          points: [
+            "Injury",
+            "Wage inflation / arms race",
+            "He asks to leave in a few years"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "rubber-plant",
@@ -718,7 +2704,51 @@ export const CASES = [
       { name: "Financials", points: ["Price × volume vs $12M upgrade", "Resin and other variable cost", "Fixed overhead"] },
       { name: "Operations", points: ["Train capacity in and out", "Single supplier", "Plant utilization"] },
       { name: "Non-financial and risk", points: ["Jobs and development", "Terrorism", "Commodity prices"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "The upgraded plant can produce 10 million pounds of rubber per month. A monthly P&L at planned volume: revenue $100M; COGS (resin etc.) $75M; labor $8M; overhead $10M; transport $6M. Capex is $12M. What is monthly operating profit, margin, and simple payback?",
+        answer: "$1M/month (1% margin); 12-month payback",
+        steps: [
+          "OP = 100 - 75 - 8 - 10 - 6 = $1M.",
+          "Margin = 1%.",
+          "Payback = 12M / 1M = 12 months."
+        ],
+        insight: "Payback is fast, but 1% commodity margins die if rubber or resin prices move."
+      }
+    ],
+    creative: {
+      prompt: "The government cares about ROI, jobs, and development, and terrorism closed this plant before. What else should it consider?",
+      buckets: [
+        {
+          name: "Economic development",
+          points: [
+            "Local wages supporting other priorities",
+            "Political narrative / reelection",
+            "Jobs vs thin profit"
+          ]
+        },
+        {
+          name: "Risks",
+          points: [
+            "Terrorism targeting the plant",
+            "Rubber price collapse",
+            "Resin scarcity",
+            "Train-track failures",
+            "Local opposition"
+          ]
+        },
+        {
+          name: "Operations",
+          points: [
+            "Train bottleneck (only two trains/day)",
+            "Plant is at ~50% of what better logistics could do",
+            "Hedge resin"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "pubu",
@@ -736,7 +2766,61 @@ export const CASES = [
       { name: "Solid waste", points: ["Dining, dorms, labs, buildings", "Reduce, recycle, eliminate"] },
       { name: "Energy and transit", points: ["Grid mix and on-site renewables", "Efficiency", "Diesel campus buses"] },
       { name: "Water and delivery", points: ["Landscaping and plumbing", "Funding and rankings/reputation", "2040 roadmap"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "PubU diesel buses: exhibit routes total 100 miles of routes (Main 8x6, Athletic 8x3, Med 4x3, Downtown 5x4 — round 104 to 100). Each route runs 4 times/hour, 15 hours/day, 7 days/week, 50 weeks/year. 2 miles/gallon; $6/gallon; 25 buses x $20,000 maintenance; 20 lbs CO2 per gallon. What is annual cost and CO2?",
+        answer: "$6.8M cost; 21M lbs CO2",
+        steps: [
+          "Miles = 100 x 4 x 15 x 7 x 50 = 2.1M.",
+          "Gallons = 2.1M / 2 = 1.05M; fuel = 1.05M x $6 = $6.3M.",
+          "Maintenance = 25 x $20K = $0.5M; total $6.8M.",
+          "CO2 = 1.05M x 20 = 21M lbs."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "Electric replacement: $1M per bus (25 buses); 4 miles per gallon-of-diesel-equivalent; 25 gde per MW-h; grid $100/MW-h and 1,000 lbs CO2/MW-h today; maintenance $4,000/bus. Over the Board's 5-year window, what is annual opex save, 5-year opex save vs $25M capex, and ROI?",
+        answer: "$4.6M/year save; $23M over 5 years vs $25M capex; ROI -8%; CO2 unchanged until the grid greener",
+        steps: [
+          "GDE = 2.1M / 4 = 525K; MW-h = 525K / 25 = 21K; power cost = 21K x $100 = $2.1M.",
+          "Maint. = 25 x $4K = $0.1M; electric opex $2.2M vs diesel $6.8M; save $4.6M/year.",
+          "5-year save $23M; capex $25M; ROI = (23-25)/25 = -8%.",
+          "CO2 = 21K x 1,000 = 21M lbs — same as diesel on today's grid."
+        ],
+        insight: "Vendor 'savings' fail a 5-year ROI; the climate case waits on a cleaner grid."
+      }
+    ],
+    creative: {
+      prompt: "Electric buses miss a 5-year money hurdle. What other levers should PubU pull toward net-zero waste by 2040?",
+      buckets: [
+        {
+          name: "Solid waste",
+          points: [
+            "Dining, dorms, labs",
+            "Reduce / recycle / eliminate"
+          ]
+        },
+        {
+          name: "Energy",
+          points: [
+            "On-site renewables",
+            "Building efficiency",
+            "Wait for / contract a greener grid mix"
+          ]
+        },
+        {
+          name: "Local / community benefits of electrifying anyway",
+          points: [
+            "Noise and fumes",
+            "Student wellness",
+            "Safety sensors",
+            "Rankings and donor story"
+          ]
+        }
+      ]
+    }
   },
   {
     id: "whale-hotel",
@@ -754,7 +2838,69 @@ export const CASES = [
       { name: "Demand", points: ["Peak vs off-peak occupancy", "Whale share of guests", "Unmet demand at the best competitor"] },
       { name: "Product and price", points: ["Pool and amenity quality", "Nightly rate whales will pay", "Construction cost and 5-year payback"] },
       { name: "Competition and risk", points: ["King’s Palace, Belzor, Egyptian", "Seasonality", "Brand and execution"] }
-    ]
+    ],
+    math: [
+      {
+        kind: "definite",
+        prompt: "Dubai luxury comps — rooms, off-peak util / whale share, peak util / whale share: King's Palace 5,000, 80%/25%, 80%/25%; Egyptian 4,000, 75%/25%, 95%/37.5%; Belzor 8,000, 75%/33.3%, 100%/50%. Peak is June-August. How many whales per night off-peak and peak at each hotel and in total?",
+        answer: "Off-peak 3,750; peak 6,425",
+        steps: [
+          "King's: 5000x80%x25% = 1,000 both seasons.",
+          "Egyptian: 4000x75%x25% = 750 off-peak; 4000x95%x37.5% = 1,425 peak.",
+          "Belzor: 8000x75%x33.3% = 2,000 off-peak; 8000x100%x50% = 4,000 peak.",
+          "Totals 3,750 and 6,425. Belzor is sold out at peak — unmet excellent-pool demand."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "A new excellent-pool hotel at $2,500/night would take 100% of King's Palace and Egyptian whales plus 250 extra whales per night off-peak and 1,575 extra at peak. King's has 1,000 whales/night year-round; Egyptian has 750 off-peak and 1,425 peak. What is nightly whale demand off-peak and peak?",
+        answer: "2,000 off-peak; 4,000 peak",
+        steps: [
+          "Off-peak = 1,000 + 750 + 250 = 2,000.",
+          "Peak = 1,000 + 1,425 + 1,575 = 4,000."
+        ]
+      },
+      {
+        kind: "definite",
+        prompt: "To serve 4,000 peak whales the hotel needs 3 stories. Land $2B; rooms $3B; excellent pool $0.5B. Opex $250M per 1,500 rooms (x3 stories). Rate $2,500/night. Peak: 4,000 whales x 30 nights/month x 3 months. Off-peak: 2,000 x 30 x 9 months. Construction takes 2 years. 5-year payback required. Annual operating profit and does 5-year payback clear?",
+        answer: "$1.5B annual OP on $5.5B capex; 5-year window collects only $4.5B — miss by $1B (~8 more months)",
+        steps: [
+          "Capex = 2 + 3 + 0.5 = $5.5B.",
+          "Peak revenue = 4,000 x $2,500 x 30 x 3 = $900M; off-peak = 2,000 x $2,500 x 30 x 9 = $1.35B; annual $2.25B.",
+          "Opex = $250M x 3 = $750M; OP = $1.5B.",
+          "2 build years + 3 operating years = $4.5B vs $5.5B."
+        ],
+        insight: "Economics are strong but the 5-year clock (with 2 years of build) is tight unless F&B/other revenue is added."
+      }
+    ],
+    creative: {
+      prompt: "The 5-year payback is short. How else could the developer make the whale hotel work, and what risks remain?",
+      buckets: [
+        {
+          name: "Extra revenue",
+          points: [
+            "F&B, spa, events",
+            "Residences or branded villas",
+            "Peak-season premiums above $2,500"
+          ]
+        },
+        {
+          name: "Product",
+          points: [
+            "Excellent pool is non-negotiable vs comps",
+            "Cannibalization of the client's existing 3 Dubai resorts"
+          ]
+        },
+        {
+          name: "Risk",
+          points: [
+            "King's / Egyptian / Belzor responses",
+            "Off-peak seasonality",
+            "Construction overruns pushing payback out"
+          ]
+        }
+      ]
+    }
   }
 ];
 
