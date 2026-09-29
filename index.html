@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Framework Practice</title>
+  <title>Case interview practice</title>
+  <meta name="description" content="Timed case-opening drills for SMU Consulting Club members. Recap, structure, explain, then compare with a strong example." />
   <style>
     :root {
       --smu-blue: #354CA1;
@@ -300,10 +301,28 @@
       100% { opacity: 0; }
     }
     .prompt-card { border: 0; background: #f5f5f7; border-radius: 18px; padding: clamp(24px, 5vw, 42px); font-size: 19px; line-height: 1.65; box-shadow: none; }
+    .prompt-hint, .stage-hint {
+      color: #6e6e73; font-size: 15px; font-weight: 400; line-height: 1.45; margin: 8px 0 0; max-width: 440px;
+    }
+    .prompt-hint { text-align: center; max-width: 560px; margin: 0 auto 14px; }
     .debrief { gap: 10px; }
     .card { border: 1px solid #e8e8ed; border-radius: 16px; box-shadow: none; }
     .card h3 { color: var(--smu-blue); letter-spacing: .08em; }
     .bucket { background: #f5f5f7; }
+    .check-card label {
+      display: flex; align-items: flex-start; gap: 10px; margin: 12px 0 0;
+      color: #1d1d1f; font-size: 15px; line-height: 1.4; cursor: pointer;
+    }
+    .check-card input { margin-top: 3px; accent-color: var(--smu-blue); }
+    .filter-row {
+      display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+      margin: 0 auto 22px; color: #6e6e73; font-size: 14px;
+    }
+    .filter-row select {
+      font: inherit; font-size: 14px; padding: 8px 12px;
+      border: 1px solid #e8e8ed; border-radius: 10px; background: #fff; color: #1d1d1f;
+    }
+    .session-note { text-align: center; color: #86868b; font-size: 13px; margin: 18px 0 0; }
     @media (max-width: 700px) {
       main { width: min(100% - 36px, 980px); padding: 50px 0 64px; }
       header { gap: 8px; padding: 0 15px; }
@@ -520,6 +539,9 @@
     const FLASH_KEY = "frameworkPracticeFlashEnabled";
     const AUTH_KEY = "frameworkPracticeUnlocked";
     const CASES_KEY = "frameworkPracticeCases";
+    const SEEN_OPENING_KEY = "frameworkPracticeSeenOpening";
+    const TYPE_FILTER_KEY = "frameworkPracticeTypeFilter";
+    const SESSION_COUNT_KEY = "frameworkPracticeSessionCount";
     const PHASES = ["prompt", "recap", "framework", "explain", "debrief"];
     const DURATIONS = {
       recap: 90,
@@ -528,13 +550,24 @@
     };
 
     const COPY = {
-      recap: { label: "Recap & questions" },
-      framework: { label: "Build your framework" },
-      explain: { label: "Explain your framework" }
+      recap: {
+        label: "Recap & questions",
+        hint: "Restate the problem out loud, then ask clarifying questions. Do not look at the prompt."
+      },
+      framework: {
+        label: "Build your framework",
+        hint: "Sketch MECE buckets on paper. Aim for a structure you can explain, not a full answer."
+      },
+      explain: {
+        label: "Explain your framework",
+        hint: "Walk through each bucket as if the interviewer is in the room."
+      }
     };
 
     let currentCase = null;
     let phase = "home";
+    let selectedType = "any";
+    try { selectedType = sessionStorage.getItem(TYPE_FILTER_KEY) || "any"; } catch (e) {}
     let remaining = 0;
     let timerId = null;
     let pendingTimeUpNotice = "";
@@ -576,17 +609,107 @@
 
     function pickRandomCase() {
       const pool = Array.isArray(window.CASES) ? window.CASES : [];
-      if (!pool.length) return null;
+      const typed = selectedType === "any"
+        ? pool
+        : pool.filter(function (c) { return c.type === selectedType; });
+      const source = typed.length ? typed : pool;
+      if (!source.length) return null;
       let used = getUsedIds();
-      let available = pool.filter(function (c) { return used.indexOf(c.id) === -1; });
+      let available = source.filter(function (c) { return used.indexOf(c.id) === -1; });
       if (!available.length) {
-        used = [];
-        available = pool.slice();
+        const sourceIds = source.map(function (c) { return c.id; });
+        used = used.filter(function (id) { return sourceIds.indexOf(id) === -1; });
+        available = source.slice();
       }
       const pick = available[Math.floor(Math.random() * available.length)];
       used.push(pick.id);
       setUsedIds(used);
       return pick;
+    }
+
+    function caseTypes() {
+      const pool = Array.isArray(window.CASES) ? window.CASES : [];
+      const types = [];
+      pool.forEach(function (c) {
+        if (c.type && types.indexOf(c.type) === -1) types.push(c.type);
+      });
+      types.sort();
+      return types;
+    }
+
+    function typeFilterHtml() {
+      const options = ['<option value="any">Any type (random)</option>'].concat(
+        caseTypes().map(function (type) {
+          return '<option value="' + escapeHtml(type) + '"' +
+            (type === selectedType ? " selected" : "") + ">" + escapeHtml(type) + "</option>";
+        })
+      );
+      return (
+        '<div class="filter-row"><label for="type-filter">Case type</label>' +
+        '<select id="type-filter">' + options.join("") + "</select></div>"
+      );
+    }
+
+    function bindTypeFilter() {
+      const select = document.getElementById("type-filter");
+      if (!select) return;
+      if (selectedType !== "any" && !caseTypes().some(function (t) { return t === selectedType; })) {
+        selectedType = "any";
+        select.value = "any";
+      }
+      select.addEventListener("change", function () {
+        selectedType = select.value || "any";
+        try { sessionStorage.setItem(TYPE_FILTER_KEY, selectedType); } catch (e) {}
+      });
+    }
+
+    function getSessionCount() {
+      try {
+        return parseInt(sessionStorage.getItem(SESSION_COUNT_KEY) || "0", 10) || 0;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    function bumpSessionCount() {
+      try {
+        sessionStorage.setItem(SESSION_COUNT_KEY, String(getSessionCount() + 1));
+      } catch (e) {}
+    }
+
+    function sessionNoteHtml() {
+      const n = getSessionCount();
+      if (!n) return "";
+      return '<p class="session-note">' + n + " opening" + (n === 1 ? "" : "s") + " this sitting</p>";
+    }
+
+    function hasSeenOpening() {
+      try { return localStorage.getItem(SEEN_OPENING_KEY) === "1"; } catch (e) { return false; }
+    }
+
+    function markOpeningSeen() {
+      try { localStorage.setItem(SEEN_OPENING_KEY, "1"); } catch (e) {}
+    }
+
+    function isLiveDrill() {
+      return ["prompt", "recap", "framework", "explain"].indexOf(phase) !== -1;
+    }
+
+    function leaveDrill(nextFn) {
+      if (!isLiveDrill()) {
+        nextFn();
+        return;
+      }
+      if (window.confirm("Leave this case? The timer will stop and you will lose this opening.")) {
+        clearTimer();
+        currentCase = null;
+        nextFn();
+      }
+    }
+
+    function startOpeningFromHome() {
+      if (hasSeenOpening()) startNewCase();
+      else goFrontHalf();
     }
 
     function clearTimer() {
@@ -692,16 +815,19 @@
       app.innerHTML = [
         homeHero(),
         '<div class="why-grid">',
-        '<article class="why-card"><b>Train the minutes that matter</b><p>Interviewers form a view of you in the opening. This drill puts that stretch on a clock so the pressure feels like the real room.</p></article>',
-        '<article class="why-card"><b>Reps without a partner</b><p>You can run a full opening on your own. Start whenever you have about ten minutes and still get a complete cycle.</p></article>',
-        '<article class="why-card"><b>See what strong looks like</b><p>The debrief is not a score. It is a clean example you can check against, so you correct habits instead of guessing.</p></article>',
+        '<article class="why-card"><b>Open under time pressure</b><p>The first minutes of a case set the tone. This drill puts that stretch on a clock so it feels like the room.</p></article>',
+        '<article class="why-card"><b>Practice without a partner</b><p>Run a full opening on your own. Start whenever you have about ten minutes and still get a complete cycle.</p></article>',
+        '<article class="why-card"><b>Check against a strong example</b><p>The debrief is not a score. It is a clean example you can check against, so you correct habits instead of guessing.</p></article>',
         "</div>",
+        typeFilterHtml(),
         '<div class="track-grid">',
         '<div class="track-slot"><article class="track-card"><span class="track-kicker">Front half</span><b>Case opening</b><span>Prompt, recap, framework, and explain.</span></article><button class="btn-primary" id="home-start-btn" type="button">Start case opening <span aria-hidden="true"> →</span></button></div>',
         '<div class="track-slot"><article class="track-card"><span class="track-kicker">Back half</span><b>Math and creative</b><span>Quantitative and brainstorming work after the structure.</span></article><button class="btn-disabled" type="button" disabled>Coming soon</button></div>',
-        "</div>"
+        "</div>",
+        sessionNoteHtml()
       ].join("");
-      document.getElementById("home-start-btn").addEventListener("click", goFrontHalf);
+      bindTypeFilter();
+      document.getElementById("home-start-btn").addEventListener("click", startOpeningFromHome);
     }
 
     function goFrontHalf() {
@@ -711,6 +837,7 @@
       app.innerHTML = [
         openingHero(),
         '<div class="home-story"><p>You get one look at a real case prompt. Then you recap the ask, pose clarifying questions, build a framework, and walk through it as if the interviewer is in the room. When you finish, you compare your work with a sample goal, strong questions, and an example framework.</p></div>',
+        typeFilterHtml(),
         '<div class="flow-heading"><h2>Your practice flow</h2><p>The next stage starts automatically when time runs out. Ready early? Select Next.</p><p class="flash-disclaimer"><span id="flash-copy">The screen flashes red briefly when time runs out.</span> <button class="inline-link" id="flash-toggle" type="button" aria-pressed="true">Turn off flash</button></p></div>',
         '<div class="steps">',
         step("1", "Prompt · 30 to 45 seconds", "You get one look at the case. The timer adjusts to the prompt length."),
@@ -719,8 +846,9 @@
         step("4", "Explain your framework · 2 minutes", "Walk through the framework as if the interviewer is in the room."),
         step("5", "Compare your work", "Compare your approach with a sample goal, strong clarifying questions, and an example framework."),
         "</div>",
-        '<div class="actions"><button class="btn-primary" id="start-btn">Start a practice case <span aria-hidden="true"> →</span></button></div>'
+        '<div class="actions"><button class="btn-primary" id="start-btn">Start case opening <span aria-hidden="true"> →</span></button></div>'
       ].join("");
+      bindTypeFilter();
       document.getElementById("start-btn").addEventListener("click", startNewCase);
       updateFlashToggle();
       document.getElementById("flash-toggle").addEventListener("click", function () {
@@ -753,9 +881,10 @@
     }
 
     function startNewCase() {
+      markOpeningSeen();
       currentCase = pickRandomCase();
       if (!currentCase) {
-        app.innerHTML = "<p>No cases loaded. Open this folder’s index.html next to cases.js.</p>";
+        app.innerHTML = "<p>No cases loaded.</p>";
         return;
       }
       showPrompt();
@@ -784,6 +913,7 @@
       phase = "prompt";
       app.innerHTML = [
         stageBar("Read the prompt", "prompt", "0:30"),
+        '<p class="prompt-hint">You get one look. Capture the ask, then the prompt hides.</p>',
         '<div class="prompt-card" id="prompt-text">' + escapeHtml(currentCase.prompt) + "</div>",
         '<div class="actions"><button class="btn-primary" id="advance-btn">Next</button></div>'
       ].join("");
@@ -797,7 +927,7 @@
       app.innerHTML = [
         timeUpNoticeHtml(),
         '<div class="stage-bar practice-stage phase-' + name + '">',
-        '<div class="stage-left"><span class="phase-label">' + copy.label + '</span><div class="dots" aria-label="Step ' + (PHASES.indexOf(name) + 1) + ' of ' + PHASES.length + '">' + dotsHtml(name) + "</div></div>",
+        '<div class="stage-left"><span class="phase-label">' + copy.label + '</span><p class="stage-hint">' + copy.hint + '</p><div class="dots" aria-label="Step ' + (PHASES.indexOf(name) + 1) + ' of ' + PHASES.length + '">' + dotsHtml(name) + "</div></div>",
         '<div class="timer" id="timer" role="timer" aria-live="off">' + formatTime(DURATIONS[name]) + "</div>",
         '<div class="actions"><button class="btn-primary" id="advance-btn">' + (name === "explain" ? "Done" : "Next") + "</button></div>",
         "</div>"
@@ -823,6 +953,7 @@
       clearTimer();
       phase = "debrief";
       pendingTimeUpNotice = "";
+      bumpSessionCount();
       const questions = (currentCase.goodQuestions || []).map(function (q) {
         return "<li>" + escapeHtml(q) + "</li>";
       }).join("");
@@ -840,6 +971,11 @@
         timeUpNoticeHtml(),
         '<p class="lede">These are strong examples and guidance. There are many correct answers.</p>',
         '<div class="debrief">',
+        '<article class="card check-card"><h3>Quick self-check</h3>',
+        '<label><input type="checkbox" /> I recapped the problem in my own words</label>',
+        '<label><input type="checkbox" /> I asked two or three clarifying questions</label>',
+        '<label><input type="checkbox" /> My buckets were MECE enough to present</label>',
+        "</article>",
         (currentCase.title ? '<article class="card"><h3>Case name</h3><p>' + escapeHtml(currentCase.title) + "</p></article>" : ""),
         (currentCase.type ? '<article class="card"><h3>Case type</h3><p>' + escapeHtml(currentCase.type) + "</p></article>" : ""),
         '<article class="card"><h3>Prompt</h3><p>' + escapeHtml(currentCase.prompt) + "</p></article>",
@@ -847,8 +983,9 @@
         '<article class="card"><h3>Good clarifying questions</h3><ul>' + questions + "</ul></article>",
         '<article class="card"><h3>Example framework</h3>' + buckets + "</article>",
         "</div>",
+        sessionNoteHtml(),
         '<div class="actions">',
-        '<button class="btn-primary" id="new-btn">New random case</button>',
+        '<button class="btn-primary" id="new-btn">Next case</button>',
         '<button class="btn-secondary" id="instructions-btn" type="button">Instructions</button>',
         "</div>"
       ].join("");
@@ -903,16 +1040,55 @@
       document.body.classList.remove("is-gated");
     }
 
+    function trapMenuFocus(event) {
+      if (event.key !== "Tab") return;
+      const drawer = document.getElementById("nav-drawer");
+      if (!drawer || !drawer.classList.contains("is-open")) return;
+      const nodes = Array.prototype.slice.call(drawer.querySelectorAll("button")).filter(function (el) {
+        return !el.disabled;
+      });
+      if (!nodes.length) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    function setDrawerTabbable(open) {
+      const drawer = document.getElementById("nav-drawer");
+      if (!drawer) return;
+      Array.prototype.forEach.call(drawer.querySelectorAll("button"), function (el) {
+        if (open) el.removeAttribute("tabindex");
+        else el.setAttribute("tabindex", "-1");
+      });
+    }
+
     function setMenuOpen(open) {
       const drawer = document.getElementById("nav-drawer");
       const backdrop = document.getElementById("nav-backdrop");
       const btn = document.getElementById("menu-btn");
       if (!drawer || !backdrop || !btn) return;
+      const wasOpen = drawer.classList.contains("is-open");
       drawer.classList.toggle("is-open", open);
       backdrop.classList.toggle("is-open", open);
       drawer.setAttribute("aria-hidden", String(!open));
+      drawer.inert = !open;
       btn.setAttribute("aria-expanded", String(open));
       document.body.classList.toggle("menu-open", open);
+      setDrawerTabbable(open);
+      document.removeEventListener("keydown", trapMenuFocus);
+      if (open) {
+        document.addEventListener("keydown", trapMenuFocus);
+        const closeBtn = document.getElementById("nav-close-btn");
+        if (closeBtn) closeBtn.focus();
+      } else if (wasOpen) {
+        btn.focus();
+      }
     }
 
     function closeMenu() {
@@ -926,6 +1102,9 @@
       const homeBtn = document.getElementById("nav-home-btn");
       const frontBtn = document.getElementById("nav-front-btn");
       const backBtn = document.getElementById("nav-back-btn");
+      const drawer = document.getElementById("nav-drawer");
+      if (drawer) drawer.inert = true;
+      setDrawerTabbable(false);
       if (btn) {
         btn.addEventListener("click", function () {
           setMenuOpen(btn.getAttribute("aria-expanded") !== "true");
@@ -936,19 +1115,19 @@
       if (homeBtn) {
         homeBtn.addEventListener("click", function () {
           closeMenu();
-          goMenu();
+          leaveDrill(goMenu);
         });
       }
       if (frontBtn) {
         frontBtn.addEventListener("click", function () {
           closeMenu();
-          goFrontHalf();
+          leaveDrill(goFrontHalf);
         });
       }
       if (backBtn) {
         backBtn.addEventListener("click", function () {
           closeMenu();
-          goBackHalf();
+          leaveDrill(goBackHalf);
         });
       }
       document.addEventListener("keydown", function (event) {
