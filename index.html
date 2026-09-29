@@ -323,12 +323,114 @@
       .practice-stage .timer { min-width: 112px; padding: 16px 12px; font-size: 44px; }
       .time-up-notice { font-size: 14px; padding: 13px 15px; }
     }
+    .track-grid, .coming-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      max-width: 760px; margin: 0 auto; align-items: stretch;
+    }
+    .track-card, .coming-card {
+      display: block; width: 100%; text-align: left;
+      background: #fff; border: 1px solid #e8e8ed; border-radius: 18px;
+      padding: 28px 26px; color: inherit;
+    }
+    .track-slot {
+      display: flex; flex-direction: column; align-items: stretch; gap: 14px; height: 100%;
+    }
+    .track-slot .track-card { flex: 1; }
+    .track-slot .btn-primary, .track-slot .btn-disabled {
+      width: 100%; min-height: 44px; box-sizing: border-box;
+    }
+    .btn-disabled {
+      background: #e8e8ed; color: #86868b; box-shadow: none; border: 0;
+      border-radius: 999px; padding: 12px 22px; font-size: 14px; font-weight: 500;
+      letter-spacing: 0; cursor: not-allowed;
+    }
+    .track-card span.track-kicker, .coming-card .coming-kicker {
+      display: block; color: var(--smu-red); font-size: 11px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .track-card b, .coming-card b {
+      display: block; color: #1d1d1f; font-size: 22px; font-weight: 600;
+      letter-spacing: -.03em; margin-bottom: 8px;
+    }
+    .track-card span, .coming-card p {
+      display: block; color: #6e6e73; font-size: 15px; line-height: 1.45; font-weight: 400; margin: 0;
+    }
+    .coming-card { cursor: default; background: #f5f5f7; }
+    .coming-soon {
+      display: inline-block; margin-top: 14px; color: #86868b;
+      font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    }
+    .home-story {
+      max-width: 680px; margin: -18px auto 36px; text-align: center;
+    }
+    .home-story p {
+      color: #6e6e73; font-size: 17px; line-height: 1.55; margin: 0;
+    }
+    .why-grid {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;
+      max-width: 920px; margin: 0 auto 40px;
+    }
+    .why-card {
+      background: #f5f5f7; border-radius: 16px; padding: 22px 20px; text-align: left;
+    }
+    .why-card b {
+      display: block; color: #1d1d1f; font-size: 15px; font-weight: 600;
+      letter-spacing: -.02em; margin-bottom: 8px;
+    }
+    .why-card p { color: #6e6e73; font-size: 14px; line-height: 1.5; margin: 0; }
+    @media (max-width: 700px) {
+      .why-grid { grid-template-columns: 1fr; }
+    }
+
+    body.menu-open { overflow: hidden; }
+    .nav-backdrop {
+      position: fixed; inset: 0; z-index: 60;
+      background: rgba(0, 0, 0, .28);
+      opacity: 0; pointer-events: none;
+      transition: opacity .28s ease;
+    }
+    .nav-backdrop.is-open { opacity: 1; pointer-events: auto; }
+    .nav-drawer {
+      position: fixed; top: 0; right: 0; z-index: 61;
+      width: min(360px, 88vw); height: 100%;
+      display: flex; flex-direction: column; gap: 28px;
+      padding: 20px 22px 32px;
+      background: #fff;
+      box-shadow: -18px 0 40px rgba(0, 0, 0, .08);
+      transform: translateX(100%);
+      transition: transform .32s cubic-bezier(.22, 1, .36, 1);
+    }
+    .nav-drawer.is-open { transform: translateX(0); }
+    .nav-drawer-top {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .nav-drawer-top h2 {
+      margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -.02em; color: #1d1d1f;
+    }
+    .nav-close {
+      background: transparent; color: #424245; font: inherit; font-size: 12px; font-weight: 500;
+      padding: 8px 10px; border-radius: 9px; cursor: pointer;
+    }
+    .nav-close:hover { background: #f5f5f7; color: var(--smu-blue); }
+    .nav-close:focus-visible, .nav-link:focus-visible {
+      outline: 2px solid var(--smu-blue); outline-offset: 3px;
+    }
+    .nav-links { display: grid; gap: 8px; }
+    .nav-link {
+      display: block; width: 100%; text-align: left; cursor: pointer; font: inherit;
+      background: #fff; border: 1px solid #e8e8ed; border-radius: 16px; padding: 18px 16px;
+    }
+    .nav-link:hover { background: #f5f5f7; }
+    .nav-link b { display: block; color: #1d1d1f; font-size: 16px; font-weight: 600; letter-spacing: -.02em; margin-bottom: 4px; }
+    .nav-link span { display: block; color: #6e6e73; font-size: 13px; line-height: 1.4; }
+
     @media (prefers-reduced-motion: reduce) {
       .timer.urgent { animation: none; }
       .time-up-notice { animation: none; }
       .time-up-notice.is-hidden { transition: none; }
       .screen-flash { display: none; }
       .completion-overlay { animation: none; }
+      .nav-backdrop, .nav-drawer { transition: none; }
     }
 
     /* Members-only gate (session unlock) */
@@ -369,6 +471,8 @@
     .gate-error[hidden] { display: none; }
     .gate-note { color: #86868b; font-size: 12px; margin-top: 18px; text-align: center; }
     body.is-gated header,
+    body.is-gated .nav-backdrop,
+    body.is-gated .nav-drawer,
     body.is-gated main { visibility: hidden; }
   </style>
 </head>
@@ -396,8 +500,20 @@
       <span class="wordmark-club">Consulting &amp; Corporate Strategy Club</span>
     </div>
     <img class="mustang-mark" src="https://www.smu.edu/-/media/site/brand/2022/logo-guidelines/peruna/perunar.png?h=402&amp;hash=D34CA424D04C4D9B074AC7E1646133C3&amp;w=400" alt="SMU Mustang" />
-    <button class="btn-home" id="home-btn" type="button">Home</button>
+    <button class="btn-home" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav-drawer">Menu</button>
   </header>
+  <div class="nav-backdrop" id="nav-backdrop"></div>
+  <aside class="nav-drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-labelledby="nav-title" aria-hidden="true">
+    <div class="nav-drawer-top">
+      <h2 id="nav-title">Menu</h2>
+      <button class="nav-close" id="nav-close-btn" type="button">Close</button>
+    </div>
+    <nav class="nav-links">
+      <button class="nav-link" id="nav-home-btn" type="button"><b>Home</b><span>What this practice is for</span></button>
+      <button class="nav-link" id="nav-front-btn" type="button"><b>Front half</b><span>Case opening</span></button>
+      <button class="nav-link" id="nav-back-btn" type="button"><b>Back half</b><span>Math and creative</span></button>
+    </nav>
+  </aside>
   <main id="app"></main>
   <script>
     const USED_KEY = "frameworkPracticeUsedIds";
@@ -561,13 +677,36 @@
       }).join("");
     }
 
-    function goHome() {
+    function menuHero() {
+      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice the opening of a case interview.</h1><p class="lede">A timed drill for the first minutes of a case: hear the prompt, structure your thinking, and explain it out loud.</p></div></section>';
+    }
+
+    function goMenu() {
       clearTimer();
       currentCase = null;
       phase = "home";
       app.innerHTML = [
-        '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>A better way to practice.</h1><p class="lede">Build the habits behind a strong case interview: clarify the ask, create a structure, and communicate with confidence.</p></div></section>',
-        '<div class="flow-heading"><h2>Your practice flow</h2><p>The next stage starts automatically when time runs out. Ready early? Select Next.</p><p class="flash-disclaimer"><span id="flash-copy">The screen flashes red briefly when time runs out.</span> <button class="inline-link" id="flash-toggle" type="button" aria-pressed="true">Turn off flash</button></p></div>',
+        menuHero(),
+        '<div class="home-story"><p>You get one look at a real case prompt. Then you recap the ask, pose clarifying questions, build a framework, and walk through it as if the interviewer is in the room. When you finish, you compare your work with a sample goal, strong questions, and an example framework.</p></div>',
+        '<div class="why-grid">',
+        '<article class="why-card"><b>Train the minutes that matter</b><p>Interviewers form a view of you in the opening. This drill puts that stretch on a clock so the pressure feels like the real room.</p></article>',
+        '<article class="why-card"><b>Reps without a partner</b><p>You can run a full opening on your own. Start whenever you have about ten minutes and still get a complete cycle.</p></article>',
+        '<article class="why-card"><b>See what strong looks like</b><p>The debrief is not a score. It is a clean example you can check against, so you correct habits instead of guessing.</p></article>',
+        "</div>",
+        '<div class="track-grid">',
+        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Front half</span><b>Case opening</b><span>Prompt, recap, framework, and explain.</span></article><button class="btn-primary" id="home-start-btn" type="button">Start case opening <span aria-hidden="true"> →</span></button></div>',
+        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Back half</span><b>Math and creative</b><span>Quantitative and brainstorming work after the structure.</span></article><button class="btn-disabled" type="button" disabled>Coming soon</button></div>',
+        "</div>"
+      ].join("");
+      document.getElementById("home-start-btn").addEventListener("click", goFrontHalf);
+    }
+
+    function goFrontHalf() {
+      clearTimer();
+      currentCase = null;
+      phase = "front";
+      app.innerHTML = [
+        '<div class="flow-heading"><h2>Front half · Case opening</h2><p>The next stage starts automatically when time runs out. Ready early? Select Next.</p><p class="flash-disclaimer"><span id="flash-copy">The screen flashes red briefly when time runs out.</span> <button class="inline-link" id="flash-toggle" type="button" aria-pressed="true">Turn off flash</button></p></div>',
         '<div class="steps">',
         step("1", "Prompt · 30 to 45 seconds", "You get one look at the case. The timer adjusts to the prompt length."),
         step("2", "Recap & questions · 1 minute 30 seconds", "Restate the problem, then ask clarifying questions."),
@@ -584,6 +723,21 @@
         try { localStorage.setItem(FLASH_KEY, String(flashEnabled)); } catch (e) {}
         updateFlashToggle();
       });
+    }
+
+    function goBackHalf() {
+      clearTimer();
+      currentCase = null;
+      phase = "back";
+      app.innerHTML = [
+        '<div class="flow-heading"><h2>Back half</h2><p>Math and creative work after you have a structure.</p></div>',
+        '<div class="coming-grid">',
+        '<article class="coming-card"><span class="coming-kicker">Back half</span><b>Math</b><p>Sizing, rates, and other quantitative work in the case.</p><span class="coming-soon">Coming soon</span></article>',
+        '<article class="coming-card"><span class="coming-kicker">Back half</span><b>Creative</b><p>Brainstorming ideas after you have a structure.</p><span class="coming-soon">Coming soon</span></article>',
+        "</div>",
+        '<div class="actions"><button class="inline-link" id="back-menu-btn" type="button">Back to home</button></div>'
+      ].join("");
+      document.getElementById("back-menu-btn").addEventListener("click", goMenu);
     }
 
     function step(n, title, body) {
@@ -694,7 +848,7 @@
         "</div>"
       ].join("");
       document.getElementById("new-btn").addEventListener("click", startNewCase);
-      document.getElementById("instructions-btn").addEventListener("click", goHome);
+      document.getElementById("instructions-btn").addEventListener("click", goFrontHalf);
       showCompletionOverlay();
     }
 
@@ -744,9 +898,62 @@
       document.body.classList.remove("is-gated");
     }
 
+    function setMenuOpen(open) {
+      const drawer = document.getElementById("nav-drawer");
+      const backdrop = document.getElementById("nav-backdrop");
+      const btn = document.getElementById("menu-btn");
+      if (!drawer || !backdrop || !btn) return;
+      drawer.classList.toggle("is-open", open);
+      backdrop.classList.toggle("is-open", open);
+      drawer.setAttribute("aria-hidden", String(!open));
+      btn.setAttribute("aria-expanded", String(open));
+      document.body.classList.toggle("menu-open", open);
+    }
+
+    function closeMenu() {
+      setMenuOpen(false);
+    }
+
+    function bindNavDrawer() {
+      const btn = document.getElementById("menu-btn");
+      const backdrop = document.getElementById("nav-backdrop");
+      const closeBtn = document.getElementById("nav-close-btn");
+      const homeBtn = document.getElementById("nav-home-btn");
+      const frontBtn = document.getElementById("nav-front-btn");
+      const backBtn = document.getElementById("nav-back-btn");
+      if (btn) {
+        btn.addEventListener("click", function () {
+          setMenuOpen(btn.getAttribute("aria-expanded") !== "true");
+        });
+      }
+      if (backdrop) backdrop.addEventListener("click", closeMenu);
+      if (closeBtn) closeBtn.addEventListener("click", closeMenu);
+      if (homeBtn) {
+        homeBtn.addEventListener("click", function () {
+          closeMenu();
+          goMenu();
+        });
+      }
+      if (frontBtn) {
+        frontBtn.addEventListener("click", function () {
+          closeMenu();
+          goFrontHalf();
+        });
+      }
+      if (backBtn) {
+        backBtn.addEventListener("click", function () {
+          closeMenu();
+          goBackHalf();
+        });
+      }
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") closeMenu();
+      });
+    }
+
     function initApp() {
-      goHome();
-      document.getElementById("home-btn").addEventListener("click", goHome);
+      goMenu();
+      bindNavDrawer();
     }
 
     async function fetchCasesWithPassword(password) {
