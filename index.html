@@ -677,7 +677,11 @@
       }).join("");
     }
 
-    function menuHero() {
+    function homeHero() {
+      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Case interview practice.</h1><p class="lede">Timed drills you can run on your own. Start with the case opening, then use math and creative when those are ready.</p></div></section>';
+    }
+
+    function openingHero() {
       return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice the opening of a case interview.</h1><p class="lede">A timed drill for the first minutes of a case: hear the prompt, structure your thinking, and explain it out loud.</p></div></section>';
     }
 
@@ -686,8 +690,7 @@
       currentCase = null;
       phase = "home";
       app.innerHTML = [
-        menuHero(),
-        '<div class="home-story"><p>You get one look at a real case prompt. Then you recap the ask, pose clarifying questions, build a framework, and walk through it as if the interviewer is in the room. When you finish, you compare your work with a sample goal, strong questions, and an example framework.</p></div>',
+        homeHero(),
         '<div class="why-grid">',
         '<article class="why-card"><b>Train the minutes that matter</b><p>Interviewers form a view of you in the opening. This drill puts that stretch on a clock so the pressure feels like the real room.</p></article>',
         '<article class="why-card"><b>Reps without a partner</b><p>You can run a full opening on your own. Start whenever you have about ten minutes and still get a complete cycle.</p></article>',
@@ -706,7 +709,9 @@
       currentCase = null;
       phase = "front";
       app.innerHTML = [
-        '<div class="flow-heading"><h2>Front half · Case opening</h2><p>The next stage starts automatically when time runs out. Ready early? Select Next.</p><p class="flash-disclaimer"><span id="flash-copy">The screen flashes red briefly when time runs out.</span> <button class="inline-link" id="flash-toggle" type="button" aria-pressed="true">Turn off flash</button></p></div>',
+        openingHero(),
+        '<div class="home-story"><p>You get one look at a real case prompt. Then you recap the ask, pose clarifying questions, build a framework, and walk through it as if the interviewer is in the room. When you finish, you compare your work with a sample goal, strong questions, and an example framework.</p></div>',
+        '<div class="flow-heading"><h2>Your practice flow</h2><p>The next stage starts automatically when time runs out. Ready early? Select Next.</p><p class="flash-disclaimer"><span id="flash-copy">The screen flashes red briefly when time runs out.</span> <button class="inline-link" id="flash-toggle" type="button" aria-pressed="true">Turn off flash</button></p></div>',
         '<div class="steps">',
         step("1", "Prompt · 30 to 45 seconds", "You get one look at the case. The timer adjusts to the prompt length."),
         step("2", "Recap & questions · 1 minute 30 seconds", "Restate the problem, then ask clarifying questions."),
