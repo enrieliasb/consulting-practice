@@ -725,6 +725,19 @@
       }
     }
 
+    function isLocalPreview() {
+      const host = location.hostname;
+      return host === "localhost" || host === "127.0.0.1" || host === "[::1]";
+    }
+
+    async function loadLocalCases() {
+      const mod = await import("./functions/_data/cases.js");
+      if (!mod || !Array.isArray(mod.CASES)) {
+        throw new Error("No local cases");
+      }
+      return mod.CASES;
+    }
+
     function hideGate() {
       const gate = document.getElementById("gate");
       if (gate) gate.hidden = true;
@@ -792,14 +805,31 @@
       }
     }
 
-    if (isSessionUnlocked()) {
-      window.CASES = loadCachedCases();
-      hideGate();
-      initApp();
-    } else {
+    (async function boot() {
+      if (isLocalPreview()) {
+        try {
+          const cases = await loadLocalCases();
+          cacheCases(cases);
+          hideGate();
+          initApp();
+        } catch (e) {
+          const error = document.getElementById("gate-error");
+          if (error) {
+            error.textContent = "Local preview could not load cases. Refresh and try again.";
+            error.hidden = false;
+          }
+        }
+        return;
+      }
+      if (isSessionUnlocked()) {
+        window.CASES = loadCachedCases();
+        hideGate();
+        initApp();
+        return;
+      }
       const form = document.getElementById("gate-form");
       if (form) form.addEventListener("submit", handleGateSubmit);
-    }
+    })();
   </script>
 </body>
 </html>
