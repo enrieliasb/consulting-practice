@@ -1,4 +1,6 @@
 import { CASES } from "../_data/cases.js";
+import { GUESSTIMATES } from "../_data/guesstimates.js";
+import { FIT } from "../_data/fit.js";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -29,7 +31,7 @@ export async function onRequestPost(context) {
     return json({ error: "Unauthorized" }, 401);
   }
 
-  return json({ cases: CASES });
+  return json({ cases: CASES, guesstimates: GUESSTIMATES, fit: FIT });
 }
 
 export async function onRequest(context) {

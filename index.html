@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Case interview practice</title>
-  <meta name="description" content="Timed case-opening drills for SMU Consulting Club members. Recap, structure, explain, then compare with a strong example." />
+  <title>Framework Practice</title>
+  <meta name="description" content="Timed case and interview drills for SMU Consulting Club members. Open a case, work math and guesstimates, then practice Fit and PEI." />
   <style>
     :root {
       --smu-blue: #354CA1;
@@ -301,6 +301,29 @@
       100% { opacity: 0; }
     }
     .prompt-card { border: 0; background: #f5f5f7; border-radius: 18px; padding: clamp(24px, 5vw, 42px); font-size: 19px; line-height: 1.65; box-shadow: none; }
+    .exhibit-card {
+      background: #fff; border: 1px solid #e8e8ed; border-radius: 16px;
+      padding: 18px 20px; margin: 0 0 14px; text-align: left;
+    }
+    .exhibit-card h3 {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: #86868b; margin: 0 0 10px;
+    }
+    .exhibit-card p { font-size: 15px; line-height: 1.55; color: #1d1d1f; margin: 0 0 8px; }
+    .exhibit-card p:last-child { margin-bottom: 0; }
+    .exhibit-card ul {
+      margin: 0; padding: 0; list-style: none;
+      display: grid; gap: 8px;
+    }
+    .exhibit-card li {
+      position: relative; padding: 8px 10px 8px 14px;
+      background: #f5f5f7; border-radius: 10px;
+      font-size: 15px; line-height: 1.45; color: #1d1d1f;
+    }
+    .prompt-card.prompt-ask {
+      font-size: clamp(18px, 2.4vw, 22px); font-weight: 600; line-height: 1.4;
+      padding: 22px 24px; max-width: 760px; margin: 0 auto;
+    }
     .prompt-hint, .stage-hint {
       color: #6e6e73; font-size: 15px; font-weight: 400; line-height: 1.45; margin: 8px 0 0; max-width: 440px;
     }
@@ -358,6 +381,7 @@
       display: flex; flex-direction: column; align-items: stretch; gap: 14px; height: 100%;
     }
     .track-slot .track-card { flex: 1; }
+    .track-slot .track-card:not(.coming-card) { cursor: pointer; }
     .track-slot .btn-primary, .track-slot .btn-disabled {
       width: 100%; min-height: 44px; box-sizing: border-box;
     }
@@ -402,6 +426,30 @@
     .why-card p { color: #6e6e73; font-size: 14px; line-height: 1.5; margin: 0; }
     @media (max-width: 700px) {
       .why-grid { grid-template-columns: 1fr; }
+      .track-grid, .coming-grid { grid-template-columns: 1fr; }
+    }
+    .methods {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+      margin: 8px 0 28px;
+    }
+    .methods article {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+      padding: 16px 16px 18px;
+    }
+    .methods b { display: block; color: var(--blue-ink); font-size: 14px; margin-bottom: 6px; }
+    .methods p { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0; }
+    .score-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 8px 0; border-bottom: 1px solid var(--line);
+    }
+    .score-row:last-child { border-bottom: 0; }
+    .score-row span { color: var(--ink); font-size: 14px; }
+    .score-row select {
+      font: inherit; font-size: 14px; padding: 6px 10px; border-radius: 8px;
+      border: 1px solid var(--line); background: #fff; color: var(--ink);
+    }
+    @media (max-width: 700px) {
+      .methods { grid-template-columns: 1fr; }
     }
 
     body.menu-open { overflow: hidden; }
@@ -532,8 +580,8 @@
     </div>
     <nav class="nav-links">
       <button class="nav-link" id="nav-home-btn" type="button"><b>Home</b><span>What this practice is for</span></button>
-      <button class="nav-link" id="nav-front-btn" type="button"><b>Front half</b><span>Case opening</span></button>
-      <button class="nav-link" id="nav-back-btn" type="button"><b>Back half</b><span>Math and creative</span></button>
+      <button class="nav-link" id="nav-case-btn" type="button"><b>Case practice</b><span>Opening, math, creative, sizing</span></button>
+      <button class="nav-link" id="nav-interview-btn" type="button"><b>Interview room</b><span>Fit, communication, presence</span></button>
     </nav>
   </aside>
   <main id="app"></main>
@@ -541,17 +589,24 @@
     const USED_KEY = "frameworkPracticeUsedIds";
     const FLASH_KEY = "frameworkPracticeFlashEnabled";
     const AUTH_KEY = "frameworkPracticeUnlocked";
-    const CASES_KEY = "frameworkPracticeCasesV2";
+    const CASES_KEY = "frameworkPracticeBankV6";
     const SEEN_OPENING_KEY = "frameworkPracticeSeenOpening";
     const SEEN_MATH_KEY = "frameworkPracticeSeenMath";
     const SEEN_CREATIVE_KEY = "frameworkPracticeSeenCreative";
+    const SEEN_GUESSTIMATE_KEY = "frameworkPracticeSeenGuesstimate";
+    const SEEN_FIT_KEY = "frameworkPracticeSeenFit";
     const TYPE_FILTER_KEY = "frameworkPracticeTypeFilter";
     const MATH_KIND_KEY = "frameworkPracticeMathKind";
+    const GUESSTIMATE_KIND_KEY = "frameworkPracticeGuesstimateKind";
     const SESSION_COUNT_KEY = "frameworkPracticeSessionCount";
     const MATH_USED_KEY = "frameworkPracticeMathUsedIds";
     const CREATIVE_USED_KEY = "frameworkPracticeCreativeUsedIds";
+    const GUESSTIMATE_USED_KEY = "frameworkPracticeGuesstimateUsedIds";
+    const FIT_USED_KEY = "frameworkPracticeFitUsedIds";
     const MATH_SESSION_KEY = "frameworkPracticeMathSessionCount";
     const CREATIVE_SESSION_KEY = "frameworkPracticeCreativeSessionCount";
+    const GUESSTIMATE_SESSION_KEY = "frameworkPracticeGuesstimateSessionCount";
+    const FIT_SESSION_KEY = "frameworkPracticeFitSessionCount";
     const PHASES = ["prompt", "recap", "framework", "explain", "debrief"];
     const BACK_PHASES = ["work", "debrief"];
     const DURATIONS = {
@@ -577,11 +632,15 @@
 
     let currentCase = null;
     let currentMath = null;
+    let currentGuesstimate = null;
+    let currentFit = null;
     let phase = "home";
     let selectedType = "any";
     try { selectedType = sessionStorage.getItem(TYPE_FILTER_KEY) || "any"; } catch (e) {}
     let selectedMathKind = "any";
     try { selectedMathKind = sessionStorage.getItem(MATH_KIND_KEY) || "any"; } catch (e) {}
+    let selectedGuesstimateKind = "any";
+    try { selectedGuesstimateKind = sessionStorage.getItem(GUESSTIMATE_KIND_KEY) || "any"; } catch (e) {}
     let remaining = 0;
     let elapsed = 0;
     let timerId = null;
@@ -710,6 +769,22 @@
       return pickFromPool(pool, CREATIVE_USED_KEY, function (c) { return c.id; });
     }
 
+    function guesstimatePool() {
+      const pool = Array.isArray(window.GUESSTIMATES) ? window.GUESSTIMATES : [];
+      if (selectedGuesstimateKind === "any") return pool.slice();
+      const typed = pool.filter(function (g) { return g.kind === selectedGuesstimateKind; });
+      return typed.length ? typed : pool.slice();
+    }
+
+    function pickRandomGuesstimate() {
+      return pickFromPool(guesstimatePool(), GUESSTIMATE_USED_KEY, function (g) { return g.id; });
+    }
+
+    function pickRandomFit() {
+      const pool = Array.isArray(window.FIT) ? window.FIT : [];
+      return pickFromPool(pool, FIT_USED_KEY, function (f) { return f.id; });
+    }
+
     function caseTypes() {
       const pool = Array.isArray(window.CASES) ? window.CASES : [];
       const types = [];
@@ -770,6 +845,31 @@
       });
     }
 
+    function guesstimateKindFilterHtml() {
+      const options = [
+        ["any", "Any method (random)"],
+        ["top-down", "Top-down"],
+        ["bottom-up", "Bottom-up"],
+        ["bottleneck", "Bottleneck"]
+      ].map(function (pair) {
+        return '<option value="' + pair[0] + '"' +
+          (pair[0] === selectedGuesstimateKind ? " selected" : "") + ">" + pair[1] + "</option>";
+      });
+      return (
+        '<div class="filter-row"><label for="guesstimate-kind-filter">Method</label>' +
+        '<select id="guesstimate-kind-filter">' + options.join("") + "</select></div>"
+      );
+    }
+
+    function bindGuesstimateKindFilter() {
+      const select = document.getElementById("guesstimate-kind-filter");
+      if (!select) return;
+      select.addEventListener("change", function () {
+        selectedGuesstimateKind = select.value || "any";
+        try { sessionStorage.setItem(GUESSTIMATE_KIND_KEY, selectedGuesstimateKind); } catch (e) {}
+      });
+    }
+
     function getStoredCount(key) {
       try {
         return parseInt(sessionStorage.getItem(key) || "0", 10) || 0;
@@ -806,13 +906,27 @@
         if (!n) return "";
         return '<p class="session-note">' + n + " opening" + (n === 1 ? "" : "s") + " this sitting</p>";
       }
+      if (track === "guesstimate") {
+        const n = getStoredCount(GUESSTIMATE_SESSION_KEY);
+        if (!n) return "";
+        return '<p class="session-note">' + n + " guesstimate" + (n === 1 ? "" : "s") + " this sitting</p>";
+      }
+      if (track === "fit") {
+        const n = getStoredCount(FIT_SESSION_KEY);
+        if (!n) return "";
+        return '<p class="session-note">' + n + " fit drill" + (n === 1 ? "" : "s") + " this sitting</p>";
+      }
       const bits = [];
       const openings = getSessionCount();
       const maths = getStoredCount(MATH_SESSION_KEY);
       const creatives = getStoredCount(CREATIVE_SESSION_KEY);
+      const guesses = getStoredCount(GUESSTIMATE_SESSION_KEY);
+      const fits = getStoredCount(FIT_SESSION_KEY);
       if (openings) bits.push(openings + " opening" + (openings === 1 ? "" : "s"));
       if (maths) bits.push(maths + " math");
       if (creatives) bits.push(creatives + " creative");
+      if (guesses) bits.push(guesses + " guesstimate" + (guesses === 1 ? "" : "s"));
+      if (fits) bits.push(fits + " fit");
       if (!bits.length) return "";
       return '<p class="session-note">' + bits.join(" · ") + " this sitting</p>";
     }
@@ -841,8 +955,24 @@
       try { localStorage.setItem(SEEN_CREATIVE_KEY, "1"); } catch (e) {}
     }
 
+    function hasSeenGuesstimate() {
+      try { return localStorage.getItem(SEEN_GUESSTIMATE_KEY) === "1"; } catch (e) { return false; }
+    }
+
+    function markGuesstimateSeen() {
+      try { localStorage.setItem(SEEN_GUESSTIMATE_KEY, "1"); } catch (e) {}
+    }
+
+    function hasSeenFit() {
+      try { return localStorage.getItem(SEEN_FIT_KEY) === "1"; } catch (e) { return false; }
+    }
+
+    function markFitSeen() {
+      try { localStorage.setItem(SEEN_FIT_KEY, "1"); } catch (e) {}
+    }
+
     function isLiveDrill() {
-      return ["prompt", "recap", "framework", "explain", "math-work", "creative-work"].indexOf(phase) !== -1;
+      return ["prompt", "recap", "framework", "explain", "math-work", "creative-work", "guesstimate-work", "fit-work"].indexOf(phase) !== -1;
     }
 
     function leaveDrill(nextFn) {
@@ -850,26 +980,48 @@
         nextFn();
         return;
       }
-      if (window.confirm("Leave this case? The timer will stop and you will lose this drill.")) {
+      if (window.confirm("Leave this drill? The timer will stop and you will lose this round.")) {
         clearTimer();
-        currentCase = null;
-        currentMath = null;
+        resetDrillState();
         nextFn();
       }
     }
 
     function startOpeningFromHome() {
-      if (hasSeenOpening()) startNewCase();
-      else goFrontHalf();
+      goFrontHalf();
     }
 
     function startMathFromHub() {
-      if (hasSeenMath()) startNewMath();
-      else goMathInstructions();
+      goMathInstructions();
     }
 
     function startCreativeFromHub() {
-      goBackHalf();
+      goCreativeInstructions();
+    }
+
+    function startGuesstimateFromHub() {
+      goGuesstimateInstructions();
+    }
+
+    function startFitFromHub() {
+      goFitInstructions();
+    }
+
+    function bindTrack(btnId, fn) {
+      const btn = document.getElementById(btnId);
+      if (btn) btn.addEventListener("click", fn);
+      const card = btn && btn.parentElement && btn.parentElement.querySelector(".track-card");
+      if (card && !card.classList.contains("coming-card")) {
+        card.setAttribute("role", "button");
+        card.tabIndex = 0;
+        card.addEventListener("click", fn);
+        card.addEventListener("keydown", function (event) {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            fn();
+          }
+        });
+      }
     }
 
     function clearTimer() {
@@ -902,13 +1054,15 @@
       }, 1000);
     }
 
-    function startCountUpTimer() {
+    function startCountUpTimer(cautionAt, urgentAt) {
       clearTimer();
       elapsed = 0;
-      renderCountUp();
+      const caution = cautionAt == null ? 300 : cautionAt;
+      const urgent = urgentAt == null ? 360 : urgentAt;
+      renderCountUp(caution, urgent);
       timerId = setInterval(function () {
         elapsed += 1;
-        renderCountUp();
+        renderCountUp(caution, urgent);
       }, 1000);
     }
 
@@ -921,13 +1075,15 @@
       el.classList.toggle("urgent", remaining <= 5);
     }
 
-    function renderCountUp() {
+    function renderCountUp(cautionAt, urgentAt) {
       const el = document.getElementById("timer");
       if (!el) return;
+      const caution = cautionAt == null ? 300 : cautionAt;
+      const urgent = urgentAt == null ? 360 : urgentAt;
       el.classList.add("count-up");
       el.textContent = formatTime(elapsed);
-      el.classList.toggle("caution", elapsed >= 300 && elapsed < 360);
-      el.classList.toggle("urgent", elapsed >= 360);
+      el.classList.toggle("caution", elapsed >= caution && elapsed < urgent);
+      el.classList.toggle("urgent", elapsed >= urgent);
     }
 
     function timeUpNoticeHtml() {
@@ -989,7 +1145,7 @@
     }
 
     function homeHero() {
-      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Case interview practice.</h1><p class="lede">Timed drills you can run on your own. Start with the case opening, then use math to practice the quantitative back half.</p></div></section>';
+      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  FRAMEWORK PRACTICE</span><h1>Case interview practice.</h1><p class="lede">Timed drills you can run on your own. Case practice covers the opening and the back half. Interview room is for Fit and PEI stories.</p></div></section>';
     }
 
     function openingHero() {
@@ -1004,34 +1160,62 @@
       return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice case brainstorming.</h1><p class="lede">Bucket your ideas first, then add volume. The clock counts up. When you finish, compare with a strong example.</p></div></section>';
     }
 
-    function goMenu() {
-      clearTimer();
+    function guesstimateHero() {
+      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice market sizing.</h1><p class="lede">Pick a method, make a few clean assumptions, and land a number you can defend. The clock counts up. Compare the method, not the last digit.</p></div></section>';
+    }
+
+    function fitHero() {
+      return '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  INTERVIEW ROOM</span><h1>Practice Fit and PEI.</h1><p class="lede">Use your own stories. Lead with a headline, then tell it as STAR: Situation, Task, Action, Result. Score yourself against an example arc — not a scripted answer.</p></div></section>';
+    }
+
+    function trackSlotHtml(kicker, title, blurb, btnId, btnLabel) {
+      return (
+        '<div class="track-slot"><article class="track-card"><span class="track-kicker">' + kicker +
+        "</span><b>" + title + "</b><span>" + blurb +
+        '</span></article><button class="btn-primary" id="' + btnId + '" type="button">' +
+        btnLabel + ' <span aria-hidden="true"> →</span></button></div>'
+      );
+    }
+
+    function comingSlotHtml(kicker, title, blurb) {
+      return (
+        '<div class="track-slot"><article class="track-card coming-card"><span class="track-kicker coming-kicker">' +
+        kicker + "</span><b>" + title + "</b><span>" + blurb +
+        '</span></article><button class="btn-disabled" type="button" disabled>Coming soon</button></div>'
+      );
+    }
+
+    function resetDrillState() {
       currentCase = null;
       currentMath = null;
+      currentGuesstimate = null;
+      currentFit = null;
+    }
+
+    function goMenu() {
+      clearTimer();
+      resetDrillState();
       phase = "home";
       app.innerHTML = [
         homeHero(),
         '<div class="why-grid">',
         '<article class="why-card"><b>Open under time pressure</b><p>The first minutes of a case set the tone. This drill puts that stretch on a clock so it feels like the room.</p></article>',
-        '<article class="why-card"><b>Practice without a partner</b><p>Run a full opening on your own. Start whenever you have about ten minutes and still get a complete cycle.</p></article>',
+        '<article class="why-card"><b>Practice without a partner</b><p>Run a full cycle on your own. Start whenever you have a few minutes and still get a complete drill.</p></article>',
         '<article class="why-card"><b>Check against a strong example</b><p>The debrief is not a score. It is a clean example you can check against, so you correct habits instead of guessing.</p></article>',
         "</div>",
-        typeFilterHtml(),
         '<div class="track-grid">',
-        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Front half</span><b>Case opening</b><span>Prompt, recap, framework, and explain.</span></article><button class="btn-primary" id="home-start-btn" type="button">Start case opening <span aria-hidden="true"> →</span></button></div>',
-        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Back half</span><b>Math and creative</b><span>Quantitative and brainstorming work after the structure.</span></article><button class="btn-primary" id="home-back-btn" type="button">Start back half <span aria-hidden="true"> →</span></button></div>',
+        trackSlotHtml("Cases", "Case practice", "Opening, math, creative, and guesstimates.", "home-case-btn", "Open case practice"),
+        trackSlotHtml("Fit", "Interview room", "Fit and PEI now. Communication and presence later.", "home-interview-btn", "Open interview room"),
         "</div>",
         sessionNoteHtml()
       ].join("");
-      bindTypeFilter();
-      document.getElementById("home-start-btn").addEventListener("click", startOpeningFromHome);
-      document.getElementById("home-back-btn").addEventListener("click", goBackHalf);
+      bindTrack("home-case-btn", goCaseHub);
+      bindTrack("home-interview-btn", goInterviewHub);
     }
 
     function goFrontHalf() {
       clearTimer();
-      currentCase = null;
-      currentMath = null;
+      resetDrillState();
       phase = "front";
       app.innerHTML = [
         openingHero(),
@@ -1057,41 +1241,66 @@
       });
     }
 
-    function goBackHalf() {
+    function goCaseHub() {
       clearTimer();
-      currentCase = null;
-      currentMath = null;
-      phase = "back";
+      resetDrillState();
+      phase = "case-hub";
       app.innerHTML = [
-        '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice the back half of a case.</h1><p class="lede">After you have a structure, interviewers test quantitative work. Start math now. Creative brainstorming is not open yet.</p></div></section>',
+        '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  CASE INTERVIEW PRACTICE</span><h1>Practice the case.</h1><p class="lede">Open under time, then work math, brainstorm, or size a market. Every track ends with a sample you can compare against.</p></div></section>',
         typeFilterHtml(),
         '<div class="track-grid">',
-        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Back half</span><b>Math</b><span>Keyed numbers and market sizing. The clock counts up. Aim for under five minutes.</span></article><button class="btn-primary" id="math-start-btn" type="button">Start math <span aria-hidden="true"> →</span></button></div>',
-        '<div class="track-slot"><article class="track-card"><span class="track-kicker">Back half</span><b>Creative</b><span>Brainstorm ideas after you have a structure.</span></article><button class="btn-disabled" type="button" disabled>Coming soon</button></div>',
+        trackSlotHtml("Front half", "Case opening", "Prompt, recap, framework, and explain. The clock counts down.", "opening-start-btn", "Start case opening"),
+        trackSlotHtml("Back half", "Math", "Keyed numbers and market sizing. The clock counts up. Aim for under five minutes.", "math-start-btn", "Start math"),
+        trackSlotHtml("Back half", "Creative", "Brainstorm ideas after you have a structure. Bucket first, then add volume.", "creative-start-btn", "Start creative"),
+        trackSlotHtml("Back half", "Guesstimate", "Standalone market sizing. Top-down, bottom-up, or bottleneck.", "guesstimate-start-btn", "Start guesstimate"),
         "</div>",
         sessionNoteHtml(),
         '<div class="actions"><button class="inline-link" id="back-menu-btn" type="button">Back to home</button></div>'
       ].join("");
       bindTypeFilter();
-      document.getElementById("math-start-btn").addEventListener("click", startMathFromHub);
+      bindTrack("opening-start-btn", startOpeningFromHome);
+      bindTrack("math-start-btn", startMathFromHub);
+      bindTrack("creative-start-btn", startCreativeFromHub);
+      bindTrack("guesstimate-start-btn", startGuesstimateFromHub);
+      document.getElementById("back-menu-btn").addEventListener("click", goMenu);
+    }
+
+    function goBackHalf() {
+      goCaseHub();
+    }
+
+    function goInterviewHub() {
+      clearTimer();
+      resetDrillState();
+      phase = "interview-hub";
+      app.innerHTML = [
+        '<section class="home-hero"><div class="hero-copy"><span class="hero-kicker">SMU CONSULTING CLUB  ·  INTERVIEW ROOM</span><h1>Practice the non-case half.</h1><p class="lede">Fit and PEI decide whether they would staff you. Use your own stories. Communication and presence drills come later.</p></div></section>',
+        '<div class="track-grid">',
+        trackSlotHtml("Fit", "Fit and PEI", "Headline plus a STAR story. Aim for 90 seconds to 2.5 minutes, then self-score.", "fit-start-btn", "Start Fit"),
+        comingSlotHtml("Later", "Communication", "Answer-first, rule of three, and a clean close."),
+        comingSlotHtml("Later", "Presence", "A 60-second recommendation and the presence checklist."),
+        "</div>",
+        sessionNoteHtml("fit"),
+        '<div class="actions"><button class="inline-link" id="back-menu-btn" type="button">Back to home</button></div>'
+      ].join("");
+      bindTrack("fit-start-btn", startFitFromHub);
       document.getElementById("back-menu-btn").addEventListener("click", goMenu);
     }
 
     function goMathInstructions() {
       clearTimer();
-      currentCase = null;
-      currentMath = null;
+      resetDrillState();
       phase = "math-front";
       app.innerHTML = [
         mathHero(),
-        '<div class="home-story"><p>You get a self-contained quantitative question from a real case — either a problem with one keyed number or a market size. The numbers stay on screen. Work it out loud on paper. The timer counts up so you can see how long you took. When you are ready, compare with a sample answer and the steps behind it.</p></div>',
+        '<div class="home-story"><p>You get a self-contained quantitative question from a real case — either a problem with one keyed number or a market size. Background and numbers stay on screen. Work it out loud on paper. The timer counts up so you can see how long you took. When you are ready, compare with a sample answer and the steps behind it.</p></div>',
         '<div class="filters">',
         typeFilterHtml(),
         mathKindFilterHtml(),
         "</div>",
         '<div class="flow-heading"><h2>Your practice flow</h2><p>There is no automatic cutoff. Aim to finish in under five minutes, then select Done.</p></div>',
         '<div class="steps">',
-        step("1", "Read the question", "The prompt and all numbers stay visible. Capture the ask and the units."),
+        step("1", "Read the question", "Background, the prompt, and all numbers stay visible. Capture the ask and the units."),
         step("2", "Work the math · count up, aim under 5 minutes", "Write the formula first, then plug in numbers. Talk through every step."),
         step("3", "Compare your work", "Check your number and logic against a sample answer. Market sizes can differ; compare the method."),
         "</div>",
@@ -1103,7 +1312,66 @@
     }
 
     function goCreativeInstructions() {
-      goBackHalf();
+      clearTimer();
+      resetDrillState();
+      phase = "creative-front";
+      app.innerHTML = [
+        creativeHero(),
+        '<div class="home-story"><p>You get a brainstorm from a real case. Structure first: name two or three buckets, then fill them. The prompt stays on screen. The timer counts up. When you are ready, compare coverage with a strong example — many lists are correct.</p></div>',
+        typeFilterHtml(),
+        '<div class="flow-heading"><h2>Your practice flow</h2><p>There is no automatic cutoff. Aim to finish in a few minutes, then select Done.</p></div>',
+        '<div class="steps">',
+        step("1", "Read the ask", "Capture what you are generating ideas for. The prompt stays visible."),
+        step("2", "Brainstorm · count up", "Name buckets first, then add volume. Talk through why each idea helps."),
+        step("3", "Compare your work", "Check buckets and coverage against an example list. There is no single correct set."),
+        "</div>",
+        '<div class="actions"><button class="btn-primary" id="start-btn">Start creative <span aria-hidden="true"> →</span></button></div>'
+      ].join("");
+      bindTypeFilter();
+      document.getElementById("start-btn").addEventListener("click", startNewCreative);
+    }
+
+    function goGuesstimateInstructions() {
+      clearTimer();
+      resetDrillState();
+      phase = "guesstimate-front";
+      app.innerHTML = [
+        guesstimateHero(),
+        '<div class="home-story"><p>These are standalone sizing drills with US-calibrated bases for Cox. Pick a method, state a few assumptions, and land a number you can sanity-check. The sample answer is an example. Compare the method.</p></div>',
+        guesstimateKindFilterHtml(),
+        '<div class="flow-heading"><h2>Pick a method</h2><p>Name the method out loud before you start multiplying.</p></div>',
+        '<div class="methods">',
+        '<article><b>Top-down</b><p>Start from a national or city population, then filter to the relevant users.</p></article>',
+        '<article><b>Bottom-up</b><p>Start from one unit (store, household, lane) and scale by count and frequency.</p></article>',
+        '<article><b>Bottleneck</b><p>Capacity is min(demand, the tight stage). Name the binding constraint.</p></article>',
+        "</div>",
+        '<div class="steps">',
+        step("1", "Read the question", "The prompt and given bases stay visible. Capture units and what you are sizing."),
+        step("2", "Work the size · count up", "State the method, write the formula, then plug in. Aim for under five minutes."),
+        step("3", "Compare your work", "Your number can differ. Check the method, the filters, and the sanity check."),
+        "</div>",
+        '<div class="actions"><button class="btn-primary" id="start-btn">Start guesstimate <span aria-hidden="true"> →</span></button></div>'
+      ].join("");
+      bindGuesstimateKindFilter();
+      document.getElementById("start-btn").addEventListener("click", startNewGuesstimate);
+    }
+
+    function goFitInstructions() {
+      clearTimer();
+      resetDrillState();
+      phase = "fit-front";
+      app.innerHTML = [
+        fitHero(),
+        '<div class="home-story"><p>Build a bank of 6 to 10 real stories, then angle one to the prompt. This is not a script to memorize. The debrief is a skeleton and a 1–4 self-score so you can tighten the weakest dimension and rerun it.</p></div>',
+        '<div class="flow-heading"><h2>Story spine</h2><p>Lead with the headline. Then tell a STAR story: Situation, Task, Action, Result. Aim for 90 seconds; résumé walk-through can take two minutes.</p></div>',
+        '<div class="steps">',
+        step("1", "Headline", "Open with the outcome in one line. Do not start with your hometown."),
+        step("2", "STAR", "Situation, Task, Action, Result. Name what you owned, what you specifically did, and a quantified result."),
+        step("3", "Self-score", "Grade Structure, Specificity, Impact, Insight, Fit to the question, and Delivery from 1 to 4. Redo the lowest score."),
+        "</div>",
+        '<div class="actions"><button class="btn-primary" id="start-btn">Start Fit <span aria-hidden="true"> →</span></button></div>'
+      ].join("");
+      document.getElementById("start-btn").addEventListener("click", startNewFit);
     }
 
     function step(n, title, body) {
@@ -1116,6 +1384,8 @@
     function startNewCase() {
       markOpeningSeen();
       currentMath = null;
+      currentGuesstimate = null;
+      currentFit = null;
       currentCase = pickRandomCase();
       if (!currentCase) {
         app.innerHTML = "<p>No cases loaded.</p>";
@@ -1133,11 +1403,51 @@
       markMathSeen();
       currentCase = pick.case;
       currentMath = pick.question;
+      currentGuesstimate = null;
+      currentFit = null;
       showMathWork();
     }
 
     function startNewCreative() {
-      goBackHalf();
+      const pick = pickRandomCreative();
+      if (!pick) {
+        app.innerHTML = "<p>No creative drills loaded.</p>";
+        return;
+      }
+      markCreativeSeen();
+      currentCase = pick;
+      currentMath = null;
+      currentGuesstimate = null;
+      currentFit = null;
+      showCreativeWork();
+    }
+
+    function startNewGuesstimate() {
+      const pick = pickRandomGuesstimate();
+      if (!pick) {
+        app.innerHTML = "<p>No guesstimate drills loaded.</p>";
+        return;
+      }
+      markGuesstimateSeen();
+      currentGuesstimate = pick;
+      currentCase = null;
+      currentMath = null;
+      currentFit = null;
+      showGuesstimateWork();
+    }
+
+    function startNewFit() {
+      const pick = pickRandomFit();
+      if (!pick) {
+        app.innerHTML = "<p>No Fit drills loaded.</p>";
+        return;
+      }
+      markFitSeen();
+      currentFit = pick;
+      currentCase = null;
+      currentMath = null;
+      currentGuesstimate = null;
+      showFitWork();
     }
 
     function backStageBar(label, active, hint) {
@@ -1151,6 +1461,74 @@
       ].join("");
     }
 
+    function sentenceBullets(text) {
+      const t = String(text || "").trim();
+      if (!t) return [];
+      const parts = t.split(/(?<=[a-z0-9%)])\.\s+(?=[A-Z])/);
+      return parts.map(function (part) {
+        part = part.trim();
+        if (!part) return "";
+        if (!/[.?!]$/.test(part)) part += ".";
+        return part;
+      }).filter(Boolean);
+    }
+
+    function copyItems(value) {
+      if (!value) return [];
+      if (Array.isArray(value)) {
+        return value.filter(Boolean).map(function (item) {
+          return String(item).trim();
+        });
+      }
+      const text = String(value).trim();
+      if (text.length < 140) return [text];
+      const bullets = sentenceBullets(text);
+      return bullets.length ? bullets : [text];
+    }
+
+    function exhibitHtml(title, value) {
+      const items = copyItems(value);
+      if (!items.length) return "";
+      if (items.length === 1 && items[0].length < 160) {
+        return '<div class="exhibit-card"><h3>' + title + "</h3><p>" + escapeHtml(items[0]) + "</p></div>";
+      }
+      return (
+        '<div class="exhibit-card"><h3>' + title + "</h3><ul>" +
+        items.map(function (item) { return "<li>" + escapeHtml(item) + "</li>"; }).join("") +
+        "</ul></div>"
+      );
+    }
+
+    function splitAsk(prompt) {
+      const text = String(prompt || "").trim();
+      if (!text) return { setup: [], ask: "" };
+      const bullets = sentenceBullets(text);
+      if (bullets.length <= 1) return { setup: [], ask: text };
+      const last = bullets[bullets.length - 1];
+      if (!/\?\s*$/.test(last)) return { setup: [], ask: text };
+      return { setup: bullets.slice(0, -1), ask: last };
+    }
+
+    function mathPromptView(question) {
+      const split = splitAsk(question && question.prompt);
+      const bg = exhibitHtml("Background", question && question.background);
+      const extra = question && question.exhibit
+        ? exhibitHtml("Exhibit", question.exhibit)
+        : (!question.background && split.setup.length
+          ? exhibitHtml("Exhibit", split.setup)
+          : "");
+      const ask = split.ask || (question && question.prompt) || "";
+      return bg + extra + '<div class="prompt-card prompt-ask">' + escapeHtml(ask) + "</div>";
+    }
+
+    function mathBackgroundDebriefHtml(question) {
+      const items = copyItems(question && question.background);
+      if (!items.length) return "";
+      return '<article class="card"><h3>Background</h3><ul>' +
+        items.map(function (item) { return "<li>" + escapeHtml(item) + "</li>"; }).join("") +
+        "</ul></article>";
+    }
+
     function showMathWork() {
       phase = "math-work";
       elapsed = 0;
@@ -1159,8 +1537,8 @@
         : "Write the formula first, then plug in numbers. Aim for under 5 minutes.";
       app.innerHTML = [
         backStageBar("Work the math", "work", hint),
-        '<p class="prompt-hint">The numbers stay on screen. Talk through every step out loud.</p>',
-        '<div class="prompt-card">' + escapeHtml(currentMath.prompt) + "</div>",
+        '<p class="prompt-hint">Facts stay on screen. The question is the line in bold. Talk through every step out loud.</p>',
+        mathPromptView(currentMath),
         '<div class="actions"><button class="btn-primary" id="advance-btn">Done</button></div>'
       ].join("");
       bindSkip(showMathDebrief);
@@ -1211,7 +1589,8 @@
         '<article class="card check-card"><h3>Quick self-check</h3>' + checkHtml + "</article>",
         (currentCase.title ? '<article class="card"><h3>Case name</h3><p>' + escapeHtml(currentCase.title) + "</p></article>" : ""),
         (currentCase.type ? '<article class="card"><h3>Case type</h3><p>' + escapeHtml(currentCase.type) + "</p></article>" : ""),
-        '<article class="card"><h3>Question</h3><p>' + escapeHtml(currentMath.prompt) + "</p></article>",
+        mathBackgroundDebriefHtml(currentMath),
+        '<article class="card"><h3>Question</h3><p>' + escapeHtml(splitAsk(currentMath.prompt).ask || currentMath.prompt) + "</p></article>",
         '<article class="card"><h3>Sample answer</h3><p>' + escapeHtml(currentMath.answer) + "</p></article>",
         '<article class="card"><h3>Example steps</h3><ul>' + steps + "</ul></article>",
         (currentMath.insight ? '<article class="card"><h3>So what</h3><p>' + escapeHtml(currentMath.insight) + "</p></article>" : ""),
@@ -1262,6 +1641,123 @@
       ].join("");
       document.getElementById("new-btn").addEventListener("click", startNewCreative);
       document.getElementById("instructions-btn").addEventListener("click", goCreativeInstructions);
+      showCompletionOverlay();
+    }
+
+    function showGuesstimateWork() {
+      phase = "guesstimate-work";
+      elapsed = 0;
+      const method = currentGuesstimate.kind === "top-down"
+        ? "Top-down: start from the population, then filter."
+        : currentGuesstimate.kind === "bottom-up"
+          ? "Bottom-up: start from one unit, then scale."
+          : "Bottleneck: served volume is min(demand, the tight stage).";
+      app.innerHTML = [
+        backStageBar("Work the size", "work", method + " Aim for under 5 minutes."),
+        '<p class="prompt-hint">The bases stay on screen. Name the method out loud before you multiply.</p>',
+        '<div class="prompt-card">' + escapeHtml(currentGuesstimate.prompt) + "</div>",
+        '<div class="actions"><button class="btn-primary" id="advance-btn">Done</button></div>'
+      ].join("");
+      bindSkip(showGuesstimateDebrief);
+      startCountUpTimer();
+    }
+
+    function showGuesstimateDebrief() {
+      clearTimer();
+      phase = "guesstimate-debrief";
+      bumpStoredCount(GUESSTIMATE_SESSION_KEY);
+      const steps = (currentGuesstimate.steps || []).map(function (s) {
+        return "<li>" + escapeHtml(s) + "</li>";
+      }).join("");
+      app.innerHTML = [
+        '<div class="stage-bar"><div class="stage-left"><span class="phase-label">Compare your work</span><div class="dots">' + backDotsHtml("debrief") + "</div></div></div>",
+        '<p class="lede">This is a sample size. Your number can differ; compare the method, the filters, and the sanity check.</p>',
+        '<div class="debrief">',
+        '<article class="card check-card"><h3>Quick self-check</h3>',
+        '<label><input type="checkbox" /> I named a method before multiplying</label>',
+        '<label><input type="checkbox" /> I stated my assumptions out loud</label>',
+        '<label><input type="checkbox" /> I sense-checked the magnitude</label>',
+        "</article>",
+        '<article class="card"><h3>Method</h3><p>' + escapeHtml(currentGuesstimate.kind) + "</p></article>",
+        '<article class="card"><h3>Question</h3><p>' + escapeHtml(currentGuesstimate.prompt) + "</p></article>",
+        '<article class="card"><h3>Sample answer</h3><p>' + escapeHtml(currentGuesstimate.answer) + "</p></article>",
+        '<article class="card"><h3>Example steps</h3><ul>' + steps + "</ul></article>",
+        (currentGuesstimate.insight ? '<article class="card"><h3>So what</h3><p>' + escapeHtml(currentGuesstimate.insight) + "</p></article>" : ""),
+        "</div>",
+        sessionNoteHtml("guesstimate"),
+        '<div class="actions">',
+        '<button class="btn-primary" id="new-btn">Next guesstimate</button>',
+        '<button class="btn-secondary" id="instructions-btn" type="button">Instructions</button>',
+        "</div>"
+      ].join("");
+      document.getElementById("new-btn").addEventListener("click", startNewGuesstimate);
+      document.getElementById("instructions-btn").addEventListener("click", goGuesstimateInstructions);
+      showCompletionOverlay();
+    }
+
+    function showFitWork() {
+      phase = "fit-work";
+      elapsed = 0;
+      const aim = currentFit.aimSeconds || 90;
+      const hint = "Lead with the headline, then STAR. Aim for about " +
+        (aim >= 120 ? "2 minutes" : "90 seconds") + "; the ceiling is 2.5 minutes.";
+      app.innerHTML = [
+        backStageBar("Tell the story", "work", hint),
+        '<p class="prompt-hint">Use your own story. The prompt stays on screen. Speak out loud as if the interviewer is in the room.</p>',
+        '<div class="prompt-card">' + escapeHtml(currentFit.prompt) + "</div>",
+        '<div class="actions"><button class="btn-primary" id="advance-btn">Done</button></div>'
+      ].join("");
+      bindSkip(showFitDebrief);
+      startCountUpTimer(aim, 150);
+    }
+
+    function fitScoreRow(label) {
+      return (
+        '<div class="score-row"><span>' + escapeHtml(label) +
+        '</span><select aria-label="' + escapeHtml(label) + ' score">' +
+        '<option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option>' +
+        "</select></div>"
+      );
+    }
+
+    function showFitDebrief() {
+      clearTimer();
+      phase = "fit-debrief";
+      bumpStoredCount(FIT_SESSION_KEY);
+      const beats = ((currentFit.skeleton && currentFit.skeleton.beats) || []).map(function (b) {
+        return "<li>" + escapeHtml(b) + "</li>";
+      }).join("");
+      const coaching = (currentFit.coaching || []).map(function (c) {
+        return "<li>" + escapeHtml(c) + "</li>";
+      }).join("");
+      const headline = currentFit.skeleton && currentFit.skeleton.headline
+        ? currentFit.skeleton.headline
+        : "";
+      app.innerHTML = [
+        '<div class="stage-bar"><div class="stage-left"><span class="phase-label">Compare your work</span><div class="dots">' + backDotsHtml("debrief") + "</div></div></div>",
+        '<p class="lede">This is an example arc, not the correct story. Use your own bank. Score 1–4, then redo the lowest dimension.</p>',
+        '<div class="debrief">',
+        '<article class="card check-card"><h3>Self-score (1–4)</h3>',
+        fitScoreRow("Structure"),
+        fitScoreRow("Specificity"),
+        fitScoreRow("Impact"),
+        fitScoreRow("Insight"),
+        fitScoreRow("Fit to the question"),
+        fitScoreRow("Delivery"),
+        "</article>",
+        '<article class="card"><h3>Prompt</h3><p>' + escapeHtml(currentFit.prompt) + "</p></article>",
+        (headline ? '<article class="card"><h3>Example headline</h3><p>' + escapeHtml(headline) + "</p></article>" : ""),
+        (beats ? '<article class="card"><h3>Example STAR beats</h3><ul>' + beats + "</ul></article>" : ""),
+        (coaching ? '<article class="card"><h3>Coaching</h3><ul>' + coaching + "</ul></article>" : ""),
+        "</div>",
+        sessionNoteHtml("fit"),
+        '<div class="actions">',
+        '<button class="btn-primary" id="new-btn">Next prompt</button>',
+        '<button class="btn-secondary" id="instructions-btn" type="button">Instructions</button>',
+        "</div>"
+      ].join("");
+      document.getElementById("new-btn").addEventListener("click", startNewFit);
+      document.getElementById("instructions-btn").addEventListener("click", goFitInstructions);
       showCompletionOverlay();
     }
 
@@ -1369,28 +1865,43 @@
       showCompletionOverlay();
     }
 
-    function loadCachedCases() {
+    function applyBank(bank) {
+      window.CASES = (bank && Array.isArray(bank.cases)) ? bank.cases : [];
+      window.GUESSTIMATES = (bank && Array.isArray(bank.guesstimates)) ? bank.guesstimates : [];
+      window.FIT = (bank && Array.isArray(bank.fit)) ? bank.fit : [];
+    }
+
+    function loadCachedBank() {
       try {
         const raw = sessionStorage.getItem(CASES_KEY);
         if (!raw) return null;
         const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : null;
+        if (!parsed || !Array.isArray(parsed.cases) || !parsed.cases.length) return null;
+        return {
+          cases: parsed.cases,
+          guesstimates: Array.isArray(parsed.guesstimates) ? parsed.guesstimates : [],
+          fit: Array.isArray(parsed.fit) ? parsed.fit : []
+        };
       } catch (e) {
         return null;
       }
     }
 
-    function cacheCases(cases) {
-      window.CASES = cases;
+    function cacheBank(bank) {
+      applyBank(bank);
       try {
         sessionStorage.setItem(AUTH_KEY, "1");
-        sessionStorage.setItem(CASES_KEY, JSON.stringify(cases));
+        sessionStorage.setItem(CASES_KEY, JSON.stringify({
+          cases: window.CASES,
+          guesstimates: window.GUESSTIMATES,
+          fit: window.FIT
+        }));
       } catch (e) {}
     }
 
     function isSessionUnlocked() {
       try {
-        return sessionStorage.getItem(AUTH_KEY) === "1" && !!loadCachedCases();
+        return sessionStorage.getItem(AUTH_KEY) === "1" && !!loadCachedBank();
       } catch (e) {
         return false;
       }
@@ -1401,12 +1912,20 @@
       return host === "localhost" || host === "127.0.0.1" || host === "[::1]";
     }
 
-    async function loadLocalCases() {
-      const mod = await import("./functions/_data/cases.js?v=backhalf");
-      if (!mod || !Array.isArray(mod.CASES)) {
+    async function loadLocalBank() {
+      const [casesMod, guessMod, fitMod] = await Promise.all([
+        import("./functions/_data/cases.js?v=mathread"),
+        import("./functions/_data/guesstimates.js?v=mathbg"),
+        import("./functions/_data/fit.js?v=mathbg")
+      ]);
+      if (!casesMod || !Array.isArray(casesMod.CASES)) {
         throw new Error("No local cases");
       }
-      return mod.CASES;
+      return {
+        cases: casesMod.CASES,
+        guesstimates: (guessMod && Array.isArray(guessMod.GUESSTIMATES)) ? guessMod.GUESSTIMATES : [],
+        fit: (fitMod && Array.isArray(fitMod.FIT)) ? fitMod.FIT : []
+      };
     }
 
     function hideGate() {
@@ -1475,8 +1994,8 @@
       const backdrop = document.getElementById("nav-backdrop");
       const closeBtn = document.getElementById("nav-close-btn");
       const homeBtn = document.getElementById("nav-home-btn");
-      const frontBtn = document.getElementById("nav-front-btn");
-      const backBtn = document.getElementById("nav-back-btn");
+      const caseBtn = document.getElementById("nav-case-btn");
+      const interviewBtn = document.getElementById("nav-interview-btn");
       const drawer = document.getElementById("nav-drawer");
       if (drawer) drawer.inert = true;
       setDrawerTabbable(false);
@@ -1493,16 +2012,16 @@
           leaveDrill(goMenu);
         });
       }
-      if (frontBtn) {
-        frontBtn.addEventListener("click", function () {
+      if (caseBtn) {
+        caseBtn.addEventListener("click", function () {
           closeMenu();
-          leaveDrill(goFrontHalf);
+          leaveDrill(goCaseHub);
         });
       }
-      if (backBtn) {
-        backBtn.addEventListener("click", function () {
+      if (interviewBtn) {
+        interviewBtn.addEventListener("click", function () {
           closeMenu();
-          leaveDrill(goBackHalf);
+          leaveDrill(goInterviewHub);
         });
       }
       document.addEventListener("keydown", function (event) {
@@ -1531,7 +2050,14 @@
       if (!data || !Array.isArray(data.cases)) {
         return { ok: false, reason: "error" };
       }
-      return { ok: true, cases: data.cases };
+      return {
+        ok: true,
+        bank: {
+          cases: data.cases,
+          guesstimates: Array.isArray(data.guesstimates) ? data.guesstimates : [],
+          fit: Array.isArray(data.fit) ? data.fit : []
+        }
+      };
     }
 
     async function handleGateSubmit(event) {
@@ -1548,7 +2074,7 @@
       try {
         const result = await fetchCasesWithPassword(input.value);
         if (result.ok) {
-          cacheCases(result.cases);
+          cacheBank(result.bank);
           hideGate();
           initApp();
           return;
@@ -1574,8 +2100,8 @@
     (async function boot() {
       if (isLocalPreview()) {
         try {
-          const cases = await loadLocalCases();
-          cacheCases(cases);
+          const bank = await loadLocalBank();
+          cacheBank(bank);
           hideGate();
           initApp();
         } catch (e) {
@@ -1588,7 +2114,7 @@
         return;
       }
       if (isSessionUnlocked()) {
-        window.CASES = loadCachedCases();
+        applyBank(loadCachedBank());
         hideGate();
         initApp();
         return;
